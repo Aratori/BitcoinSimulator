@@ -5,8 +5,7 @@ import model.events.Event;
 import java.util.Vector;
 
 public class Network extends Node {
-    Vector<Node> users;
-
+    private Vector<Node> users;
     public Network() {
         users = new Vector<>();
     }
