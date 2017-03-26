@@ -1,8 +1,7 @@
 package model.nodes;
 
-/**
- * Created by anton on 25.03.17.
- */
+import model.events.Event;
+
 public abstract class Node {
-    public abstract void onEvent();
+    public abstract void onEvent(Event event);
 }
