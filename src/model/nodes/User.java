@@ -2,6 +2,9 @@ package model.nodes;
 
 import model.BitcoinSimulator;
 import model.events.Event;
+import model.utils.LogKeeper;
+
+import java.util.logging.Logger;
 
 /**
  * Узел, отвечающий за создание событий пользователя.
@@ -12,6 +15,7 @@ public class User extends Node {
     private Node parentNode;
     private int interval;
     private BitcoinSimulator simulator;
+    private static Logger log = Logger.getLogger(User.class.getName());
 
     public User(int startTime, int intervalTime, BitcoinSimulator simulator) {
         this.startTime = startTime;
@@ -35,7 +39,7 @@ public class User extends Node {
     public void onEvent(Event event)
     {
         int networkWaiting = 10;
-        System.out.println("User event happened");
+        LogKeeper.info("User event happened");
         simulator.insert(new Event(simulator.getTime() + interval, this));
         //добавляем событие на передачу сообщения в сеть
         simulator.insert(new Event(simulator.getTime() + networkWaiting, simulator.getNetwork()));

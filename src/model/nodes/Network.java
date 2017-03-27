@@ -1,11 +1,14 @@
 package model.nodes;
 
 import model.events.Event;
+import model.utils.LogKeeper;
 
 import java.util.Vector;
+import java.util.logging.Logger;
 
 public class Network extends Node {
     private Vector<Node> users;
+    private static Logger log = Logger.getLogger(Network.class.getName());
     public Network() {
         users = new Vector<>();
     }
@@ -18,8 +21,8 @@ public class Network extends Node {
     //получение сообщения пользователя
     public void onEvent(Event event) {
         if (users.contains(event.getNode()))
-            System.out.println("Network receive message");
+            LogKeeper.info("Network receive message");
         else
-            System.out.println("Unregistered user");
+            LogKeeper.info("Unregistered user");
     }
 }

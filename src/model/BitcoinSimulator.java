@@ -5,6 +5,7 @@ import model.nodes.Network;
 import model.nodes.Node;
 import model.nodes.User;
 import model.utils.ListQueue;
+import model.utils.LogKeeper;
 
 public class BitcoinSimulator extends AbstractSimulator {
     private int endTime;
@@ -14,6 +15,7 @@ public class BitcoinSimulator extends AbstractSimulator {
         this.endTime = endTime;
         this.events = new ListQueue();
         this.network = new Network();
+        LogKeeper.createLogger();
     }
 
     public void addEvent(int time, Node node) {
