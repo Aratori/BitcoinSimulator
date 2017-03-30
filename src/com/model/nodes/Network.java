@@ -10,7 +10,7 @@ public class Network extends Node {
     private Vector<Node> users;
     private static Logger log = Logger.getLogger(Network.class.getName());
     public Network() {
-        users = new Vector<>();
+        users = new Vector();
     }
 
     //регистрация нового пользователя
