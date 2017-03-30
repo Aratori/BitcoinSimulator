@@ -1,7 +1,7 @@
-package model.events;
+package com.model.events;
 
-import model.AbstractSimulator;
-import model.utils.Comparable;
+import com.model.AbstractSimulator;
+import com.model.utils.Comparable;
 
 public abstract class  AbstractEvent implements Comparable {
     public abstract void execute(AbstractSimulator simulator);

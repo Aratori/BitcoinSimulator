@@ -1,4 +1,4 @@
-package model.utils;
+package com.model.utils;
 
 public abstract class OrderedSet {
     public abstract void insert(Comparable x);

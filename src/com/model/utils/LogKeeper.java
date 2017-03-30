@@ -1,4 +1,4 @@
-package model.utils;
+package com.model.utils;
 
 import java.io.File;
 import java.util.logging.*;

@@ -1,10 +1,10 @@
-package model.events;
+package com.model.events;
 
-import model.AbstractSimulator;
-import model.nodes.Node;
-import model.utils.Comparable;
+import com.model.AbstractSimulator;
+import com.model.nodes.Node;
+import com.model.utils.Comparable;
 
-public class Event extends AbstractEvent implements model.utils.Comparable{
+public class Event extends AbstractEvent implements com.model.utils.Comparable {
     private int executionTime;
     private Node execNode;
 

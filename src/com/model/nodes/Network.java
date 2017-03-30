@@ -1,7 +1,7 @@
-package model.nodes;
+package com.model.nodes;
 
-import model.events.Event;
-import model.utils.LogKeeper;
+import com.model.events.Event;
+import com.model.utils.LogKeeper;
 
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -21,7 +21,7 @@ public class Network extends Node {
     //получение сообщения пользователя
     public void onEvent(Event event) {
         if (users.contains(event.getNode()))
-            LogKeeper.info("Network receive message");
+            LogKeeper.info("Network receive message ");
         else
             LogKeeper.info("Unregistered user");
     }

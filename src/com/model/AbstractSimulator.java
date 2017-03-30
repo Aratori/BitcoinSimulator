@@ -1,7 +1,7 @@
-package model;
+package com.model;
 
-import model.utils.OrderedSet;
-import model.events.AbstractEvent;
+import com.model.events.AbstractEvent;
+import com.model.utils.OrderedSet;
 
 public class AbstractSimulator {
     protected int time = 0;

@@ -1,11 +1,11 @@
-package model;
+package com.model;
 
-import model.events.Event;
-import model.nodes.Network;
-import model.nodes.Node;
-import model.nodes.User;
-import model.utils.ListQueue;
-import model.utils.LogKeeper;
+import com.model.events.Event;
+import com.model.nodes.Network;
+import com.model.nodes.Node;
+import com.model.nodes.User;
+import com.model.utils.ListQueue;
+import com.model.utils.LogKeeper;
 
 public class BitcoinSimulator extends AbstractSimulator {
     private int endTime;

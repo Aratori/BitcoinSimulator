@@ -1,8 +1,8 @@
-package model.nodes;
+package com.model.nodes;
 
-import model.BitcoinSimulator;
-import model.events.Event;
-import model.utils.LogKeeper;
+import com.model.BitcoinSimulator;
+import com.model.events.Event;
+import com.model.utils.LogKeeper;
 
 import java.util.logging.Logger;
 
@@ -11,6 +11,7 @@ import java.util.logging.Logger;
  * Создает событие при инициализации и через некоторые интервалы времени.
  */
 public class User extends Node {
+    private int userId;
     private int startTime;
     private Node parentNode;
     private int interval;
