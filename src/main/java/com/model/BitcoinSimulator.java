@@ -30,7 +30,7 @@ public class BitcoinSimulator extends AbstractSimulator {
         while (time < endTime && events.size() != 0) {
             Event e = (Event) events.removeFirst();
             time += e.getExecutionTime();
-            e.getNode().onEvent(e);
+            e.getNode().onEvent();
         }
     }
 
@@ -39,6 +39,7 @@ public class BitcoinSimulator extends AbstractSimulator {
         BitcoinSimulator bs = new BitcoinSimulator(400);
         User userOne = new User(10, 20, bs);
         User userTwo = new User(20, 30, bs);
+        User userThree = new User(15, 15, bs);
         bs.startSimulation();
     }
 
