@@ -3,6 +3,7 @@ package com.model.nodes;
 import com.model.events.Event;
 import com.model.utils.LogKeeper;
 import com.model.nodes.User;
+import com.model.view.NetworkView;
 
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -12,6 +13,8 @@ import java.util.Random;
 public class Network extends Node {
     private Vector<User> users;
     private static Logger log = Logger.getLogger(Network.class.getName());
+    private NetworkView view; 
+
     public Network() {
         users = new Vector();
     }

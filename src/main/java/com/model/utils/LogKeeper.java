@@ -47,7 +47,8 @@ public class LogKeeper {
     }
 
     public static void info(final String string) {
-        log.log(Level.INFO, string);
+        System.out.println(string);
+        //log.log(Level.INFO, string);
     }
 
 }
