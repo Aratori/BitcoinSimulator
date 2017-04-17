@@ -3,21 +3,21 @@ package com.model.utils;
 
 public class Coord
 {
-	private double x;
-	private double y;
+	private int x;
+	private int y;
 
-	public Coord(double X, double Y)
+	public Coord(int X, int Y)
 	{
 		this.x = X;
 		this.y = Y;
 	}
 
-	public double getX()
+	public int getX()
 	{
 		return x;
 	}
 
-	public double getY()
+	public int getY()
 	{
 		return y;
 	}

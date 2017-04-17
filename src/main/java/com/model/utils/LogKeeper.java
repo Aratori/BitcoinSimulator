@@ -2,16 +2,19 @@ package com.model.utils;
 
 import java.io.File;
 import java.util.logging.*;
+import com.model.*;
 
 public class LogKeeper {
     private static final Logger log = Logger.getGlobal();
     private static boolean loggerCreated = false;
+    private static SimulatorGUI gui;
 
-    public static void createLogger() {
+    public static void createLogger(SimulatorGUI g) {
         if (loggerCreated) {
             return;
         }
         loggerCreated = true;
+        gui = g;
         FileHandler mFileHandler = null;
         final Logger parentLogger = Logger.getAnonymousLogger().getParent();
         final Handler[] handlers = parentLogger.getHandlers();
@@ -49,6 +52,6 @@ public class LogKeeper {
     public static void info(final String string) {
         System.out.println(string);
         //log.log(Level.INFO, string);
+        gui.addLogMessage(string);
     }
-
 }

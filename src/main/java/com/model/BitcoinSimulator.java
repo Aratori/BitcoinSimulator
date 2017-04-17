@@ -13,11 +13,12 @@ public class BitcoinSimulator extends AbstractSimulator {
     private Network network;
     private static  SimulatorGUI gui;
 
-    public BitcoinSimulator(int endTime) {
+    public BitcoinSimulator(int endTime, int usersCount) {
         this.endTime = endTime;
         this.events = new ListQueue();
         this.network = new Network();
-        LogKeeper.createLogger();
+        gui = new SimulatorGUI(6);
+        LogKeeper.createLogger(gui);
     }
 
     public void addEvent(int time, Node node) {
@@ -38,14 +39,14 @@ public class BitcoinSimulator extends AbstractSimulator {
 
     public static void main(String[] args)
     {
-        BitcoinSimulator bs = new BitcoinSimulator(400);
+        BitcoinSimulator bs = new BitcoinSimulator(400, 6);
         User userOne = new User(10, 20, bs);
         User userTwo = new User(20, 30, bs);
         User userThree = new User(15, 15, bs);
-        //User userFour = new User(15, 15, bs);
+        User userFour = new User(15, 15, bs);
+        User userFive = new User(45, 20, bs);
+        User userSiz = new User(45, 20, bs);
         
-
-        gui = new SimulatorGUI(3);
         bs.startSimulation();
     }
 

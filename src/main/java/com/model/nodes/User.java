@@ -18,7 +18,6 @@ public class User extends Node {
     private Node parentNode;
     private int interval;
     private BitcoinSimulator simulator;
-    private UserView uv;
     private static Logger log = Logger.getLogger(User.class.getName());
 
     public User(int startTime, int intervalTime, BitcoinSimulator simulator) {
@@ -29,9 +28,9 @@ public class User extends Node {
         this.simulator.insert(new Event(startTime, this));
         this.simulator.getNetwork().registration(this);
         userId = userCounter;
-        //this.uv = this.simulator.getGUI().createUserView(userId);
         userCounter++;
         LogKeeper.info("User " + userId + " registered");
+        
     }
 
 
