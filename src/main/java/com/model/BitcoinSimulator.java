@@ -4,48 +4,92 @@ import com.model.events.Event;
 import com.model.nodes.Network;
 import com.model.nodes.Node;
 import com.model.nodes.User;
-import com.model.utils.ListQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 import com.model.utils.LogKeeper;
+import com.model.utils.StepUpdater;
+
+import java.util.*;
 
 
-public class BitcoinSimulator extends AbstractSimulator {
+public class BitcoinSimulator{
     private int endTime;
+    private int currentTime;
     private Network network;
-    private static  SimulatorGUI gui;
+    private SimulatorGUI gui;
+    private Timer hrono; 
+    private StepUpdater updater;
+    protected PriorityBlockingQueue<Event> events;
+    private int step;               //quantity of real time for 1 programm time
 
-    public BitcoinSimulator(int endTime, int usersCount) {
+    public BitcoinSimulator(int endTime, int usersCount, int step) {
         this.endTime = endTime;
-        this.events = new ListQueue();
+        this.currentTime = 0;
+        this.events = new PriorityBlockingQueue<Event>();
         this.network = new Network();
-        gui = new SimulatorGUI(6);
+        this.step = step;
+
+        gui = new SimulatorGUI(usersCount);
         LogKeeper.createLogger(gui);
     }
 
-    public void addEvent(int time, Node node) {
-        Event event = new Event(time, node);
-        events.insert(event);
+    public void addEvent(Event event) {
+        events.add(event);
     }
 
     public void startSimulation() {
-        //идем по очереди
-        //на каждой итерации выбираем наиболее приоритетное событие
-        //и выполняем его
-        while (time < endTime && events.size() != 0) {
-            Event e = (Event) events.removeFirst();
-            time += e.getExecutionTime();
-            e.getNode().onEvent();
+        //set timer, that will update gui and model every step time
+        StepUpdater.setBitcoinSimulator(this);
+        hrono = new Timer();
+        updater = new StepUpdater();
+        hrono.schedule(updater, 0, step);
+    }
+    public synchronized void nextStep()
+    {
+        currentTime++;
+        //check end of modeling
+        if(currentTime > endTime || events.size() == 0)
+        {
+            LogKeeper.info("Simulation ended", currentTime);
+            return;
+        }
+        System.out.println(events.size());
+        //get most priority event and check it time
+        synchronized(events){
+            if(events.peek() != null)  {
+                System.out.println(" --- --- --- ---");
+                System.out.println("Current time: " + currentTime);
+                System.out.println("Next event will execute: " + events.peek().getExecutionTime());
+                if(events.peek().getExecutionTime() == currentTime)
+                {
+                    System.out.println("Event execute");    
+                    Event e = events.poll();
+                    e.getNode().onEvent();
+                    //check for several events
+                    while(events.size() != 0)
+                    {
+                        if(events.peek().getExecutionTime() == currentTime)
+                        {
+                            Event eN = events.poll();
+                            eN.getNode().onEvent();
+                        }
+                        else
+                            break;
+
+                    }
+                }
+            }
         }
     }
 
     public static void main(String[] args)
     {
-        BitcoinSimulator bs = new BitcoinSimulator(400, 6);
+        BitcoinSimulator bs = new BitcoinSimulator(400, 3, 100);
         User userOne = new User(10, 20, bs);
         User userTwo = new User(20, 30, bs);
         User userThree = new User(15, 15, bs);
-        User userFour = new User(15, 15, bs);
+        /*User userFour = new User(15, 15, bs);
         User userFive = new User(45, 20, bs);
-        User userSiz = new User(45, 20, bs);
+        User userSix = new User(45, 20, bs);*/
         
         bs.startSimulation();
     }
@@ -57,5 +101,10 @@ public class BitcoinSimulator extends AbstractSimulator {
 
     public Network getNetwork() {
         return network;
+    }
+
+    public int getCurrentTime()
+    {
+        return currentTime;
     }
 }

@@ -38,6 +38,14 @@ public class ListQueue extends OrderedSet {
         }
         return null;
     }
+
+    public Comparable getFirst()
+    {
+        if (elements.size() ==0) return null;
+        Comparable x = (Comparable) elements.firstElement();
+        return x;
+    }
+
     public int size() {
         return elements.size();
     }

@@ -25,11 +25,11 @@ public class User extends Node {
         this.parentNode = null;
         this.simulator = simulator;
         this.interval = intervalTime;
-        this.simulator.insert(new Event(startTime, this));
+        this.simulator.addEvent(new Event(startTime, this));
         this.simulator.getNetwork().registration(this);
         userId = userCounter;
         userCounter++;
-        LogKeeper.info("User " + userId + " registered");
+        LogKeeper.info("User " + userId + " registered " , simulator.getCurrentTime());
         
     }
 
@@ -39,34 +39,34 @@ public class User extends Node {
         this.parentNode = parentNode;
         this.simulator = simulator;
         this.interval = intervalTime;
-        this.simulator.insert(new Event(startTime, this));
+        this.simulator.addEvent(new Event(startTime, this));
         this.simulator.getNetwork().registration(this);
         userId = userCounter;
         userCounter++;
-        LogKeeper.info("User " + userId + " registered");
+        LogKeeper.info("User " + userId + " registered " , simulator.getCurrentTime());
     }
 
-    public void onEvent()
+    public synchronized void onEvent()
     {
-        int networkWaiting = 10;
+        int networkWaiting = 30;
         //next user awekening
-        LogKeeper.info("User event happened " + simulator.getTime());
-        simulator.insert(new Event(simulator.getTime() + interval, this));
+        LogKeeper.info("User " + userId + " event happened " , simulator.getCurrentTime());
+        simulator.addEvent(new Event(simulator.getCurrentTime() + interval, this));
         //send message to other user
         int id = simulator.getNetwork().getRandomUser(userId);                    /*receive id of user, whom we can send message*/
         simulator.getNetwork().sendMessage(
             id,
             (String)("User " + userId + " send message to User " + id) );
-        simulator.insert(new Event(simulator.getTime() + networkWaiting, simulator.getNetwork()));
+        simulator.addEvent(new Event(simulator.getCurrentTime() + networkWaiting, simulator.getNetwork()));
     }
 
     public void receiveMessage(String message)
     {
-        LogKeeper.info("User " + userId + " receive message - " + "'" + message + "'" );
+        //LogKeeper.info("User " + userId + " receive message - " + "'" + message + "'", simulator.getCurrentTime());
     }
 
     public int getId()
     {
         return userId;
     }
-}
+}    

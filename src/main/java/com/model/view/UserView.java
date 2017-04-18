@@ -8,10 +8,10 @@ import com.model.utils.Coord;
 
 public class UserView extends JPanel
 {
-	private double xLoc;
-	private double yLoc;
-	private double xSize;
-	private double ySize;
+	private int xLoc;
+	private int yLoc;
+	private int xSize;
+	private int ySize;
 	private int userId;
 
 	public UserView(int xLoc, int yLoc){

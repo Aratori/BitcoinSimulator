@@ -80,7 +80,7 @@ public class NetworkView extends JPanel
         					usersCoord.get(i).getX(),
         					usersCoord.get(i).getY());
         	}
-
+        	
         }
 
 

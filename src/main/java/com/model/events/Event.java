@@ -1,10 +1,9 @@
 package com.model.events;
 
-import com.model.AbstractSimulator;
 import com.model.nodes.Node;
-import com.model.utils.Comparable;
+import java.lang.Comparable;
 
-public class Event extends AbstractEvent implements com.model.utils.Comparable {
+public class Event implements java.lang.Comparable<Event> {
     private int executionTime;
     private Node execNode;
 
@@ -14,22 +13,21 @@ public class Event extends AbstractEvent implements com.model.utils.Comparable {
         this.execNode = execNode;
     }
 
-    public void execute(AbstractSimulator simulator)
-    {
-        ;
-    }
-
-    public boolean lessThan(Comparable y) {
-        Event e = (Event) y;  // Will throw an exception if y is not an Event
-        return this.executionTime < e.getExecutionTime();
-    }
-
-    public int getExecutionTime()
+    public synchronized int getExecutionTime()
     {
         return executionTime;
     }
     public Node getNode()
     {
         return execNode;
+    }
+
+    @Override
+    public int compareTo(Event e)
+    {
+        if(e == null)
+            return 1;
+
+        return ((Event)this).executionTime - ((Event)e).executionTime;
     }
 }

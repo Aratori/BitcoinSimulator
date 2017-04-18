@@ -40,7 +40,7 @@ public class LogKeeper {
             }
             parentLogger.addHandler(stdConsoleHandler);
         } catch (final Exception e) {
-            LogKeeper.info("Error creating logging File Handler");
+            LogKeeper.info("Error creating logging File Handler", 0);
         }
     }
 
@@ -49,9 +49,10 @@ public class LogKeeper {
         return logDirectory;
     }
 
-    public static void info(final String string) {
-        System.out.println(string);
+    public static synchronized void info(final String string, int curTime) {
+        String message = "Program time: " + curTime + ". " + string;
+        System.out.println(message);
         //log.log(Level.INFO, string);
-        gui.addLogMessage(string);
+        gui.addLogMessage(message);
     }
 }

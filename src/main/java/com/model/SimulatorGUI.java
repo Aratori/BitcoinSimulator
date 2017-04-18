@@ -57,7 +57,7 @@ public class SimulatorGUI extends JFrame {
 
 	}
 
-	public void addLogMessage(String message)
+	public synchronized void addLogMessage(String message)
 	{
 		logModel.addElement(message);
 	}
