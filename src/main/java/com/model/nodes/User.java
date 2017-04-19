@@ -4,6 +4,7 @@ import com.model.BitcoinSimulator;
 import com.model.events.Event;
 import com.model.utils.LogKeeper;
 import com.model.view.UserView;
+import com.model.SimulatorGUI;
 
 import java.util.logging.Logger;
 
@@ -57,12 +58,14 @@ public class User extends Node {
         simulator.getNetwork().sendMessage(
             id,
             (String)("User " + userId + " send message to User " + id) );
+        System.out.println("Animation Started: start " + simulator.getCurrentTime() + " duration " + 30);
+        simulator.getGUI().addSendAnimation(userId, id, simulator.getCurrentTime(), 30);
         simulator.addEvent(new Event(simulator.getCurrentTime() + networkWaiting, simulator.getNetwork()));
     }
 
     public void receiveMessage(String message)
     {
-        //LogKeeper.info("User " + userId + " receive message - " + "'" + message + "'", simulator.getCurrentTime());
+        LogKeeper.info("User " + userId + " receive message - " + "'" + message + "'", simulator.getCurrentTime());
     }
 
     public int getId()

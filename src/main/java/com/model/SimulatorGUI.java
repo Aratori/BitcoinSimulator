@@ -54,7 +54,17 @@ public class SimulatorGUI extends JFrame {
 
 	    setBounds(0, 0, 1300, 1000);
 	    setVisible(true);
+	}
 
+	public void nextStep(int currentTime)
+	{
+		network.setCurrentTime(currentTime);
+		network.repaint();
+	}
+
+	public void addSendAnimation(int node1, int node2, int start, int duration)
+	{
+		network.addPathAnimation(node1, node2, start, duration);
 	}
 
 	public synchronized void addLogMessage(String message)
