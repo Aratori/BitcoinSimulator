@@ -19,16 +19,28 @@ public class BitcoinSimulator{
     private Timer hrono; 
     private StepUpdater updater;
     protected PriorityBlockingQueue<Event> events;
+    private boolean mode;
     private int step;               //quantity of real time for 1 programm time
 
-    public BitcoinSimulator(int endTime, int usersCount, int step) {
+    /**
+     * BitcoinSimulator constructor
+     * @param endTime   - time, when simulator work will run out
+     * @param usersCount    -   count of users in system.
+     * @param step  -   update period
+     * @param mode  -   GUI/TEXT modes
+     */
+    public BitcoinSimulator(int endTime, int usersCount, int step, boolean mode) {
         this.endTime = endTime;
         this.currentTime = 0;
         this.events = new PriorityBlockingQueue<Event>();
-        this.network = new Network();
+        this.network = new Network(this, 20);
         this.step = step;
+        this.mode = mode;
 
-        gui = new SimulatorGUI(usersCount);
+        if(mode)
+            gui = new SimulatorGUI(usersCount);
+        else
+            gui = null;
         LogKeeper.createLogger(gui);
     }
 
@@ -79,12 +91,13 @@ public class BitcoinSimulator{
                 }
             }
         }
-        gui.nextStep(currentTime);
+        if(mode)
+            gui.nextStep(currentTime);
     }
 
     public static void main(String[] args)
     {
-        BitcoinSimulator bs = new BitcoinSimulator(400, 6, 100);
+        BitcoinSimulator bs = new BitcoinSimulator(400, 6, 100, false);
         User userOne = new User(10, 20, bs);
         User userTwo = new User(20, 30, bs);
         User userThree = new User(15, 15, bs);

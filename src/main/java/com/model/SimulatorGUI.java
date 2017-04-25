@@ -10,8 +10,9 @@ import java.util.*;
 import com.model.view.UserView;
 import com.model.view.NetworkView;
 import com.model.utils.Coord;
+import com.model.view.ViewManager;
 
-public class SimulatorGUI extends JFrame {
+public class SimulatorGUI extends JFrame implements ViewManager{
 	private NetworkView network;
 	private JSplitPane split = new JSplitPane();
 	private Vector<UserView> users = new Vector();

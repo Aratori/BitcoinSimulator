@@ -1,22 +1,28 @@
 package com.model.nodes;
 
+import com.model.BitcoinSimulator;
 import com.model.events.Event;
 import com.model.utils.LogKeeper;
 import com.model.nodes.User;
 import com.model.view.NetworkView;
 
-import java.util.Vector;
+import java.util.*;
 import java.util.logging.Logger;
-import java.util.Iterator;
-import java.util.Random;
 
 public class Network extends Node {
-    private Vector<User> users;
+    private BitcoinSimulator bs;
+    private ArrayList<User> users;
     private static Logger log = Logger.getLogger(Network.class.getName());
-    private NetworkView view; 
+    private NetworkView view;
+    private PriorityQueue<Integer> sendersId = new PriorityQueue<Integer>();
+    private PriorityQueue<Integer> receiversId = new PriorityQueue<Integer>();
+    private PriorityQueue<String> messages = new PriorityQueue<String>();
+    private int delay;
 
-    public Network() {
-        users = new Vector();
+    public Network(BitcoinSimulator bs, int delay) {
+        this.bs = bs;
+        this.delay = delay;
+        users = new ArrayList<User>();
     }
 
     //регистрация нового пользователя
@@ -24,15 +30,13 @@ public class Network extends Node {
         users.add(newUser);
     }
 
-    public void sendMessage(int userId, String message)
+    //регистация события пересылки сообщения
+    public void sendMessage(int senderId, int receiverId, String message)
     {
-        User n;
-        for(Iterator<User> i = users.iterator(); i.hasNext();)
-            if((n = i.next()).getId() == userId)
-            {
-                n.receiveMessage(message);
-                break;
-            }
+        sendersId.add(senderId);
+        receiversId.add(receiverId);
+        messages.add(message);
+        bs.addEvent(new Event(bs.getCurrentTime()+delay, this));
     }
     /*
     *   Передает id пользователя, которому можно отправить сообщение
@@ -49,6 +53,6 @@ public class Network extends Node {
     }
     //получение сообщения пользователя
     public void onEvent() {
-        ;
+        users.get(receiversId.poll()).receiveMessage(sendersId.poll(), messages.poll());
     }
 }

@@ -53,6 +53,7 @@ public class LogKeeper {
         String message = "Program time: " + curTime + ". " + string;
         System.out.println(message);
         //log.log(Level.INFO, string);
-        gui.addLogMessage(message);
+        if(gui != null)
+            gui.addLogMessage(message);
     }
 }
