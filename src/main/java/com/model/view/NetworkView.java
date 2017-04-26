@@ -96,8 +96,6 @@ public class NetworkView extends JPanel
         	//System.out.println("Anim size " + (pathAnimationCoord.size()/2));
         	int lenXOrig;
         	int lenYOrig;
-        	int lenOrig;
-        	int lenNew;
         	int lenNewX;
         	int lenNewY;
         	int togX = -1;

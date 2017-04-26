@@ -8,4 +8,9 @@ import java.util.ArrayList;
 public class Block {
     private String blockHeader;
     private ArrayList<Transaction> transactions;
+
+    public void addTransaction(Transaction transaction)
+    {
+        transactions.add(transaction);
+    }
 }

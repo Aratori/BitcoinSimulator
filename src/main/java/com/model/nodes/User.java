@@ -42,7 +42,8 @@ public class User extends Node {
         simulator.addEvent(new Event(simulator.getCurrentTime() + interval, this));
         //send message to other user
         int receiverId = simulator.getNetwork().getRandomUser(userId);                    /*receive id of user, whom we can send message*/
-        simulator.getNetwork().sendMessage(userId, receiverId, (String)("User " + userId + " send message to User " + receiverId) );
+        LogKeeper.info("User " + userId + " send message to  user " + receiverId, simulator.getCurrentTime());
+        simulator.getNetwork().sendMessage(userId, receiverId, (String)("Message from user " + userId + " user " + receiverId));
         if(simulator.getGUI() != null)
             simulator.getGUI().addSendAnimation(userId, receiverId, simulator.getCurrentTime(), simulator.getNetwork().getDelay());
         }

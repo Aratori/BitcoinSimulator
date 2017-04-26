@@ -23,7 +23,14 @@ public class BitcoinNode extends User {
         super(startTime, interval, bs);
     }
 
-    public Transaction createTransaction() {
+
+    public Transaction createRecipientTransaction()
+    {
+        return new Transaction();
+    }
+
+    public Transaction createSenderTransaction()
+    {
         return new Transaction();
     }
 
@@ -31,8 +38,18 @@ public class BitcoinNode extends User {
         return true;
     }
 
-    public Block mineBlock(ArrayList<Transaction> transactions)
+    /**
+     *
+     * @param mode - false - recipient or true - sender
+     * @return
+     */
+    public Block mineBlock(boolean mode)
     {
+        Block block = new Block();
+        if(mode)
+            block.addTransaction(createSenderTransaction());
+        else
+            block.addTransaction(createRecipientTransaction());
 
         return new Block();
     }
