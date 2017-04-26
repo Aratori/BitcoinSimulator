@@ -55,4 +55,9 @@ public class Network extends Node {
     public void onEvent() {
         users.get(receiversId.poll()).receiveMessage(sendersId.poll(), messages.poll());
     }
+
+    public int getDelay()
+    {
+        return delay;
+    }
 }

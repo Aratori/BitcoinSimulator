@@ -93,7 +93,7 @@ public class NetworkView extends JPanel
         {
         	if((currentTime - startEndAnimation.get(i + 1)) > 1)
         		continue;
-        	System.out.println("Anim size " + (pathAnimationCoord.size()/2));
+        	//System.out.println("Anim size " + (pathAnimationCoord.size()/2));
         	int lenXOrig;
         	int lenYOrig;
         	int lenOrig;
@@ -102,7 +102,7 @@ public class NetworkView extends JPanel
         	int lenNewY;
         	int togX = -1;
         	int togY = -1;
-        	System.out.println("User1 x " + pathAnimationCoord.get(i).getX() + " User1 y " + pathAnimationCoord.get(i).getY());
+        	//System.out.println("User1 x " + pathAnimationCoord.get(i).getX() + " User1 y " + pathAnimationCoord.get(i).getY());
         	if(pathAnimationCoord.get(i).getX() < pathAnimationCoord.get(i+1).getX())
         	{
         		lenXOrig = pathAnimationCoord.get(i+1).getX() - pathAnimationCoord.get(i).getX();
@@ -118,16 +118,16 @@ public class NetworkView extends JPanel
         	}
         	else
         		lenYOrig = pathAnimationCoord.get(i).getY() - pathAnimationCoord.get(i+1).getY();
-        	System.out.println("X orig len " + lenXOrig + " Y orig len " + lenYOrig);
+        	//System.out.println("X orig len " + lenXOrig + " Y orig len " + lenYOrig);
         	//отношение времени == отношению старых сторон к новым сторонам
         	double rev = (double)((double)currentTime - (double)startEndAnimation.get(i))/(double)((double)startEndAnimation.get(i + 1) - (double)startEndAnimation.get(i));
-        	System.out.println("rev " + rev);
+        	//System.out.println("rev " + rev);
         	lenNewX = (int)(rev * (double)(lenXOrig));
         	lenNewY = (int)(rev * (double)(lenYOrig));
-        	System.out.println("Len new x " + lenNewX + " y " + lenNewY);	
+        	//System.out.println("Len new x " + lenNewX + " y " + lenNewY);
 
         	g2.setColor(Color.green);
-        	System.out.println("X new : " + lenXOrig + " Y new : " + lenYOrig);
+        	//System.out.println("X new : " + lenXOrig + " Y new : " + lenYOrig);
         	g2.drawOval(pathAnimationCoord.get(i).getX() + (lenNewX)*togX,pathAnimationCoord.get(i).getY() + (lenNewY)*togY, messageSize, messageSize);
         }
 

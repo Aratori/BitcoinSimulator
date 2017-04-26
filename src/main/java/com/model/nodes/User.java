@@ -33,8 +33,6 @@ public class User extends Node {
         userCounter++;
         LogKeeper.info("User " + userId + " registered " , simulator.getCurrentTime());
         this.simulator.addEvent(new Event(startTime, this));
-        userId = userCounter;
-        userCounter++;
     }
 
     public synchronized void onEvent()
@@ -46,7 +44,7 @@ public class User extends Node {
         int receiverId = simulator.getNetwork().getRandomUser(userId);                    /*receive id of user, whom we can send message*/
         simulator.getNetwork().sendMessage(userId, receiverId, (String)("User " + userId + " send message to User " + receiverId) );
         if(simulator.getGUI() != null)
-            simulator.getGUI().addSendAnimation(userId, receiverId, simulator.getCurrentTime(), interval);
+            simulator.getGUI().addSendAnimation(userId, receiverId, simulator.getCurrentTime(), simulator.getNetwork().getDelay());
         }
 
     public void receiveMessage(int senderId, String message)
