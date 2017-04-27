@@ -39,7 +39,7 @@
         <configuration>
           <archive>
               <manifest>
-                  <mainClass>com.model.BitcoinSimulator</mainClass>
+                  <mainClass>BitcoinSimulator</mainClass>
               </manifest>
           </archive>
         </configuration>
