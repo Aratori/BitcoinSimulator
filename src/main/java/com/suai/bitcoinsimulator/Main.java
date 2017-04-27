@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args)
     {
-        BitcoinSimulator bs = new BitcoinSimulator(400, 6, 1000, true);
+        BitcoinSimulator bs = new BitcoinSimulator(400, 6, 100, true   );
         User userOne = new User(10, 20, bs);
         User userTwo = new User(20, 30, bs);
         User userThree = new User(15, 15, bs);

@@ -38,7 +38,7 @@ public class BitcoinSimulator{
         this.mode = mode;
 
         if(mode)
-            gui = new SimulatorGUI(usersCount);
+            gui = new SimulatorGUI(this, usersCount);
         else
             gui = null;
         LogKeeper.createLogger(gui);
@@ -55,6 +55,22 @@ public class BitcoinSimulator{
         updater = new StepUpdater();
         hrono.schedule(updater, 3, step);
     }
+
+    public void pause()
+    {
+        if(hrono != null)
+            hrono.cancel();
+        else
+            LogKeeper.info("Timer not found", currentTime);
+    }
+
+    public void resume()
+    {
+        hrono = new Timer();
+        updater = new StepUpdater();
+        hrono.schedule(updater, 3, step);
+    }
+
     public synchronized void nextStep()
     {
         currentTime++;

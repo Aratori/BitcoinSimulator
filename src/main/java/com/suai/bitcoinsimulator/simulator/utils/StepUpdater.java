@@ -17,7 +17,8 @@ public class StepUpdater extends TimerTask {
 
     @Override
     public void run() {
- 		bs.nextStep();
+		bs.nextStep();
+
  		//bs.getGUI().nextStep();
 
     }

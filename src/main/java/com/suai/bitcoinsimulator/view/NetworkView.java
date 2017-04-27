@@ -18,46 +18,40 @@ public class NetworkView extends JPanel
 	private int userSize = 80;
 	private int messageSize = 30;
 	private int currentTime;
+	private SimulatorGUI gui;
 	private java.util.ArrayList<Coord> usersCoord = new ArrayList<Coord>();
 	private java.util.ArrayList<Coord> pathAnimationCoord = new ArrayList<Coord>();
 	private java.util.ArrayList<Integer>   startEndAnimation = new ArrayList<Integer>();
 
-	public NetworkView(int usersCount){
+	public NetworkView(SimulatorGUI gui, int usersCount){
 		super();
+		this.gui = gui;
 		this.usersCount = usersCount;
 		this.xLoc = 500;
 		this.yLoc = 350;
 		this.xSize = 100;
 		this.ySize = 100;
 		this.currentTime = 0;
+		this.setSize(700, 700);
+		this.setLocation(300, 0);
 		setUsersCoords();
-		this.setPreferredSize(new Dimension(100, 100));
+		//this.setPreferredSize(new Dimension(100, 100));
 	} 
 
 	public void setUsersCoords()
 	{
 		for(int i = 0; i < usersCount; i++)
-	    {
-	    	int togX = 1;
-	    	int togY = 1;
-        	//устанавливаем, в каком секторе находится нод
-	    	if((360/usersCount * i) > 90 && (360/usersCount * i)<= 180)		//x- y+
-	    	{
-	    		togX = -1;
-	    	} else if((360/usersCount * i) > 180 && (360/usersCount * i)<= 270)
-	    	{
-	    		togX = -1;
-	    		togY = -1;
-	    	} else if((360/usersCount * i) > 270 && (360/usersCount * i)<= 360)
-	    	{
-	    		togY = -1;
-	    	}
+		{
+			double angle = (360/usersCount) * i;
+	    	double x = 0.5 * getWidth();
+	    	double y = 0.5 * getHeight();
+	    	double r = 0.75 * Math.min(x,y);
+	    	double sin = Math.sin(Math.toRadians(angle));
+	    	double cos = Math.cos(Math.toRadians(angle));
+	    	x += r* cos;
+	    	y += r* sin;
 
-	    	int userX = xLoc + (int)(radius  * Math.cos((360/usersCount)* i))*togX;
-        	int userY = yLoc + (int)(radius  * Math.sin((360/usersCount)* i))*togY;
-        	System.out.println(" x " + userX + " y " + userY);
-        	usersCoord.add(new Coord(userX, userY));
-
+        	usersCoord.add(new Coord((int)x, (int)y));
         }
 	}
 
@@ -70,8 +64,9 @@ public class NetworkView extends JPanel
         for(int i = 0; i < usersCount; i++)
 	    {
         	//paint user
-        	g2.setColor(Color.blue);
-        	g2.fillOval(usersCoord.get(i).getX()- userSize/2, usersCoord.get(i).getY() - userSize/2, userSize, userSize);
+			g2.setColor(Color.blue);
+
+        	g2.fillOval(usersCoord.get(i).getX() - userSize/2, usersCoord.get(i).getY() - userSize/2, userSize, userSize);
         	g2.setStroke(new BasicStroke(3));
         	g2.setColor(Color.orange);
         	g2.drawOval(usersCoord.get(i).getX() - userSize/2, usersCoord.get(i).getY() - userSize/2, userSize, userSize);
@@ -90,6 +85,7 @@ public class NetworkView extends JPanel
         //paint path animation
         for(int i = 0; i < pathAnimationCoord.size(); i+=2)
         {
+        	currentTime = gui.getSimulator().getCurrentTime();
         	if((currentTime - startEndAnimation.get(i + 1)) > 1)
         		continue;
         	//System.out.println("Anim size " + (pathAnimationCoord.size()/2));
@@ -125,7 +121,7 @@ public class NetworkView extends JPanel
 
         	g2.setColor(Color.green);
         	//System.out.println("X new : " + lenXOrig + " Y new : " + lenYOrig);
-        	g2.drawOval(pathAnimationCoord.get(i).getX() + (lenNewX)*togX,pathAnimationCoord.get(i).getY() + (lenNewY)*togY, messageSize, messageSize);
+        	g2.drawOval(pathAnimationCoord.get(i).getX() + (lenNewX)*togX - messageSize/2,pathAnimationCoord.get(i).getY() + (lenNewY)*togY - messageSize/2, messageSize, messageSize);
         }
 
 
