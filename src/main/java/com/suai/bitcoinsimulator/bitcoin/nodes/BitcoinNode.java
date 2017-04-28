@@ -1,9 +1,10 @@
-package com.suai.bitcoinsimulator.simulator.nodes;
+package com.suai.bitcoinsimulator.bitcoin.nodes;
 
 
 import com.suai.bitcoinsimulator.simulator.BitcoinSimulator;
-import com.suai.bitcoinsimulator.bitcoin.Block;
-import com.suai.bitcoinsimulator.bitcoin.Transaction;
+import com.suai.bitcoinsimulator.bitcoin.bitcoinstructures.Block;
+import com.suai.bitcoinsimulator.bitcoin.bitcoinstructures.Transaction;
+import com.suai.bitcoinsimulator.simulator.nodes.User;
 
 /**
  * TransactionCreate()

@@ -71,6 +71,28 @@ public class BitcoinSimulator{
         hrono.schedule(updater, 3, step);
     }
 
+    public void setSpeed(int type)
+    {
+        hrono.cancel();
+        hrono = new Timer();
+        updater = new StepUpdater();
+        switch (type)
+        {
+            case 1:
+            {
+                hrono.schedule(updater, 3, 1000);
+            }
+            case 2:
+            {
+                hrono.schedule(updater, 3, 500);
+            }
+            case 3:
+            {
+                hrono.schedule(updater, 3, 100);
+            }
+        }
+    }
+
     public synchronized void nextStep()
     {
         currentTime++;

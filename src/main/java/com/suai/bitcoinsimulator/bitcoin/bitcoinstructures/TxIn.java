@@ -1,4 +1,4 @@
-package com.suai.bitcoinsimulator.bitcoin;
+package com.suai.bitcoinsimulator.bitcoin.bitcoinstructures;
 
 /**
  * Transaction output

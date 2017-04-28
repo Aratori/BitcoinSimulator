@@ -2,6 +2,8 @@ package com.suai.bitcoinsimulator.view;
 
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.*;
 import java.util.*;
 
@@ -10,11 +12,13 @@ import com.suai.bitcoinsimulator.simulator.BitcoinSimulator;
 import com.suai.bitcoinsimulator.view.UserView;
 import com.suai.bitcoinsimulator.view.NetworkView;
 import com.suai.bitcoinsimulator.view.ViewManager;
+import com.suai.bitcoinsimulator.view.listeners.SpeedListener;
 
 public class SimulatorGUI extends JFrame implements ViewManager {
-	private BitcoinSimulator bs;
+	private final BitcoinSimulator bs;
 	private NetworkView network;
 	private JSplitPane split = new JSplitPane();
+	private JMenuBar menu = new JMenuBar();
 	private Vector<UserView> users = new Vector();
     private int usersCount;
     private DefaultListModel logModel = new DefaultListModel();
@@ -33,8 +37,6 @@ public class SimulatorGUI extends JFrame implements ViewManager {
 	    setLocationRelativeTo(null);
 	    this.usersCount = usersCount;
 	    network = new NetworkView(this, usersCount);
-		pauseButton = new PauseButton(bs, 50, 50);
-		network.add(pauseButton);
 
 
 
@@ -55,6 +57,35 @@ public class SimulatorGUI extends JFrame implements ViewManager {
 	    //contentPane.add(network);
 	    contentPane.add(split);
 	    //addLogMessage("Log started:");
+		//set toolbar
+		pauseButton = new PauseButton(bs, 20, 20);
+		pauseButton.setSize(20,20);
+		//pauseButton.setMaximumSize(new Dimension(100, 50));
+		//menu.add(exit);
+
+		//toolBar.add(pauseButton);
+		//menu.setMaximumSize(new Dimension(getWidth(), 50));
+		JMenuItem exit = new JMenuItem("Exit");
+		exit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		JMenu speed = new JMenu("Speed");
+		JMenuItem speed1 = new JMenuItem("Speed 1");
+		JMenuItem speed2 = new JMenuItem("Speed 2");
+		JMenuItem speed3 = new JMenuItem("Speed 3");
+		speed1.addActionListener(new SpeedListener(bs, 1));
+		speed2.addActionListener(new SpeedListener(bs, 2));
+		speed3.addActionListener(new SpeedListener(bs, 3));
+		speed.add(speed1);
+		speed.add(speed2);
+		speed.add(speed3);
+		menu.add(speed);
+		menu.add(exit);
+		menu.add(pauseButton);
+		contentPane.add(menu, BorderLayout.NORTH);
 
 	    network.setBounds(400,400, 300, 300);
 
