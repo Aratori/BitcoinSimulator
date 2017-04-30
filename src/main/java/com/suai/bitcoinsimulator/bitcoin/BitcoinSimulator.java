@@ -1,4 +1,4 @@
-package com.suai.bitcoinsimulator.simulator;
+package com.suai.bitcoinsimulator.bitcoin;
 
 import com.suai.bitcoinsimulator.simulator.events.Event;
 import com.suai.bitcoinsimulator.simulator.nodes.Network;
@@ -73,7 +73,8 @@ public class BitcoinSimulator{
 
     public void setSpeed(int type)
     {
-        hrono.cancel();
+        if(hrono != null)
+            hrono.cancel();
         hrono = new Timer();
         updater = new StepUpdater();
         switch (type)
@@ -113,14 +114,14 @@ public class BitcoinSimulator{
                 {
                     System.out.println("Event execute");    
                     Event e = events.poll();
-                    e.getNode().onEvent();
+                    e.getNode().onEvent(e);
                     //check for several events
                     while(events.size() != 0)
                     {
                         if(events.peek().getExecutionTime() == currentTime)
                         {
                             Event eN = events.poll();
-                            eN.getNode().onEvent();
+                            eN.getNode().onEvent(eN);
                         }
                         else
                             break;

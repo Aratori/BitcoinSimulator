@@ -1,6 +1,7 @@
 package com.suai.bitcoinsimulator;
 
-import com.suai.bitcoinsimulator.simulator.BitcoinSimulator;
+import com.suai.bitcoinsimulator.bitcoin.BitcoinSimulator;
+import com.suai.bitcoinsimulator.bitcoin.nodes.BitcoinNode;
 import com.suai.bitcoinsimulator.simulator.nodes.User;
 
 /**
@@ -11,12 +12,12 @@ public class Main {
     public static void main(String[] args)
     {
         BitcoinSimulator bs = new BitcoinSimulator(400, 6, 100, true   );
-        User userOne = new User(10, 20, bs);
-        User userTwo = new User(20, 30, bs);
-        User userThree = new User(15, 15, bs);
-        User userFour = new User(15, 15, bs);
-        User userFive = new User(45, 20, bs);
-        User userSix = new User(45, 20, bs);
+        User userOne = new BitcoinNode(10, 20, bs);
+        User userTwo = new BitcoinNode(20, 30, bs);
+        User userThree = new BitcoinNode(15, 15, bs);
+        User userFour = new BitcoinNode(15, 15, bs);
+        User userFive = new BitcoinNode(45, 20, bs);
+        User userSix = new BitcoinNode(45, 20, bs);
 
         bs.startSimulation();
     }

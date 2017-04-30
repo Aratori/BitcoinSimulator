@@ -6,8 +6,8 @@ import java.util.ArrayList;
  * Created by anton on 26.04.17.
  */
 public class Block {
-    private String blockHeader;
-    private ArrayList<Transaction> transactions;
+    private BlockHeader blockHeader = new BlockHeader();
+    private ArrayList<Transaction> transactions = new ArrayList<Transaction>();
 
     public void addTransaction(Transaction transaction)
     {

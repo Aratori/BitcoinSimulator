@@ -9,10 +9,15 @@ import com.suai.bitcoinsimulator.simulator.messages.Message;
 public class CheckBlockMessage extends Message {
     private Block block;
 
-    public CheckBlockMessage(int senderId, int receiverId, String infoMessage, Block block)
+    public CheckBlockMessage(String infoMessage, Block block)
     {
-        super(senderId, receiverId, infoMessage, 2);
+        super(infoMessage, 2);
         this.block = block;
+    }
+
+    public Block getBlock()
+    {
+        return block;
     }
 
 }

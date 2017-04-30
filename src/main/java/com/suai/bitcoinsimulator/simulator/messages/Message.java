@@ -5,15 +5,11 @@ package com.suai.bitcoinsimulator.simulator.messages;
  */
 public class Message {
     private String infoMessage;
-    private int senderId;
-    private int receiverId;
     private final int type;
 
-    public Message(int senderId, int receiverId, String infoMessage, int type)
+    public Message(String infoMessage, int type)
     {
         this.infoMessage = infoMessage;
-        this.senderId = senderId;
-        this.receiverId = receiverId;
         this.type = type;
     }
 
@@ -26,4 +22,9 @@ public class Message {
         return type;
     }
 
+    @Override
+    public String toString()
+    {
+        return infoMessage;
+    }
 }

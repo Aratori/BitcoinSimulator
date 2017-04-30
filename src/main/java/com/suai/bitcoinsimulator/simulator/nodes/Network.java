@@ -1,7 +1,8 @@
 package com.suai.bitcoinsimulator.simulator.nodes;
 
-import com.suai.bitcoinsimulator.simulator.BitcoinSimulator;
+import com.suai.bitcoinsimulator.bitcoin.BitcoinSimulator;
 import com.suai.bitcoinsimulator.simulator.events.Event;
+import com.suai.bitcoinsimulator.simulator.messages.Message;
 import com.suai.bitcoinsimulator.view.NetworkView;
 
 import java.util.*;
@@ -14,8 +15,8 @@ public class Network extends Node {
     private NetworkView view;
     private PriorityQueue<Integer> sendersId = new PriorityQueue<Integer>();
     private PriorityQueue<Integer> receiversId = new PriorityQueue<Integer>();
-    private PriorityQueue<String> messages = new PriorityQueue<String>();
-    private int delay;
+    private ArrayList<Message> messages = new ArrayList<Message>();
+    private int delay;      //задержка на пересылку сообщения
 
     public Network(BitcoinSimulator bs, int delay) {
         this.bs = bs;
@@ -29,12 +30,29 @@ public class Network extends Node {
     }
 
     //регистация события пересылки сообщения
-    public void sendMessage(int senderId, int receiverId, String message)
+    public void sendMessage(int senderId, int receiverId, Message message)
     {
         sendersId.add(senderId);
         receiversId.add(receiverId);
         messages.add(message);
         bs.addEvent(new Event(bs.getCurrentTime()+delay, this));
+    }
+
+    public void sendMessageToAll(int senderId, Message message)
+    {
+        //пробегаем по всем нодам и отправляем им сообщения
+        for(int i = 0; i < users.size(); i++)
+        {
+            if(i == senderId)
+                continue;
+            sendersId.add(senderId);
+            receiversId.add(i);
+            messages.add(message);
+            bs.addEvent(new Event(bs.getCurrentTime() + delay, this));
+            //запускаем отсюда анимацию
+            if(bs.getGUI() != null)
+                bs.getGUI().addSendAnimation(senderId, i, bs.getCurrentTime(), bs.getCurrentTime() + delay);
+        }
     }
     /*
     *   Передает id пользователя, которому можно отправить сообщение
@@ -50,8 +68,9 @@ public class Network extends Node {
         return id;
     }
     //получение сообщения пользователя
-    public void onEvent() {
-        users.get(receiversId.poll()).receiveMessage(sendersId.poll(), messages.poll());
+    public void onEvent(Event event) {
+        users.get(receiversId.poll()).receiveMessage(sendersId.poll(), messages.get(0));
+        messages.remove(0);
     }
 
     public int getDelay()

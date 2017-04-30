@@ -1,6 +1,6 @@
 package com.suai.bitcoinsimulator.view.listeners;
 
-import com.suai.bitcoinsimulator.simulator.BitcoinSimulator;
+import com.suai.bitcoinsimulator.bitcoin.BitcoinSimulator;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

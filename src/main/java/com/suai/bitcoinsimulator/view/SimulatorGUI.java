@@ -8,10 +8,7 @@ import java.lang.*;
 import java.util.*;
 
 
-import com.suai.bitcoinsimulator.simulator.BitcoinSimulator;
-import com.suai.bitcoinsimulator.view.UserView;
-import com.suai.bitcoinsimulator.view.NetworkView;
-import com.suai.bitcoinsimulator.view.ViewManager;
+import com.suai.bitcoinsimulator.bitcoin.BitcoinSimulator;
 import com.suai.bitcoinsimulator.view.listeners.SpeedListener;
 
 public class SimulatorGUI extends JFrame implements ViewManager {

@@ -1,7 +1,8 @@
 package com.suai.bitcoinsimulator.simulator.nodes;
 
-import com.suai.bitcoinsimulator.simulator.BitcoinSimulator;
+import com.suai.bitcoinsimulator.bitcoin.BitcoinSimulator;
 import com.suai.bitcoinsimulator.simulator.events.Event;
+import com.suai.bitcoinsimulator.simulator.messages.Message;
 import com.suai.bitcoinsimulator.simulator.utils.LogKeeper;
 
 import java.util.logging.Logger;
@@ -12,10 +13,10 @@ import java.util.logging.Logger;
  */
 public class User extends Node {
     private static int userCounter = 0;             //counter, that give id to users
-    private int userId;                             //id
-    private int interval;
-    private BitcoinSimulator simulator;
-    private static Logger log = Logger.getLogger(User.class.getName());
+    protected int userId;                             //id
+    protected int interval;
+    protected BitcoinSimulator simulator;
+    protected static Logger log = Logger.getLogger(User.class.getName());
 
     /**
      * Constructor of User node
@@ -33,7 +34,7 @@ public class User extends Node {
         this.simulator.addEvent(new Event(startTime, this));
     }
 
-    public synchronized void onEvent()
+    public synchronized void onEvent(Event event)
     {
         //next user awekening
         LogKeeper.info("User " + userId + " event happened " , simulator.getCurrentTime());
@@ -41,15 +42,15 @@ public class User extends Node {
         //send message to other user
         int receiverId = simulator.getNetwork().getRandomUser(userId);                    /*receive id of user, whom we can send message*/
         LogKeeper.info("User " + userId + " send message to  user " + receiverId, simulator.getCurrentTime());
-        simulator.getNetwork().sendMessage(userId, receiverId, (String)("Message from user " + userId + " user " + receiverId));
+        simulator.getNetwork().sendMessage(userId, receiverId, new Message((String)("Message from user " + userId + " user " + receiverId), 0));
         if(simulator.getGUI() != null)
             simulator.getGUI().addSendAnimation(userId, receiverId, simulator.getCurrentTime(), simulator.getNetwork().getDelay());
         }
 
-    public void receiveMessage(int senderId, String message)
+    public void receiveMessage(int senderId, Message message)
     {
 
-        LogKeeper.info("User " + userId + " receive message - " + "'" + message + "'", simulator.getCurrentTime());
+        LogKeeper.info("User " + userId + " receive message - " + "'" + message.getInfoMessage() + "'", simulator.getCurrentTime());
     }
 
     public int getId()

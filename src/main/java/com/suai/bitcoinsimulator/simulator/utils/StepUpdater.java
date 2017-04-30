@@ -1,7 +1,7 @@
 package com.suai.bitcoinsimulator.simulator.utils;
 
 import java.util.TimerTask;
-import com.suai.bitcoinsimulator.simulator.BitcoinSimulator;
+import com.suai.bitcoinsimulator.bitcoin.BitcoinSimulator;
 
 
 /**

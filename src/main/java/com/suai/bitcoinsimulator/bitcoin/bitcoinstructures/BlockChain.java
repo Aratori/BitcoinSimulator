@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Save information about blockchain
  */
 public class BlockChain {
-    private ArrayList<Block> blockchain;
+    private ArrayList<Block> blockchain = new ArrayList<Block>();
 
     public void addBlock(Block block)
     {
