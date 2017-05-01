@@ -13,13 +13,19 @@ public class BlockChain {
         blockchain.add(block);
     }
 
-    public ArrayList<Block> getBlockChain()
+    /*public ArrayList<Block> getBlockChain()
     {
         return blockchain;
-    }
+    }*/
+
 
     public Block getBlock(int index)
     {
         return blockchain.get(index);
+    }
+
+    public int size()
+    {
+        return blockchain.size();
     }
 }

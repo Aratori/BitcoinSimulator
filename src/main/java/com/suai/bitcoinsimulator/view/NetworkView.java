@@ -1,7 +1,11 @@
 package com.suai.bitcoinsimulator.view;
 
 import java.awt.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.lang.*;
 import java.util.*;
 
@@ -18,6 +22,8 @@ public class NetworkView extends JPanel
 	private int userSize = 80;
 	private int messageSize = 30;
 	private int currentTime;
+	private BufferedImage desktop;
+	private BufferedImage mail;
 	private SimulatorGUI gui;
 	private java.util.ArrayList<Coord> usersCoord = new ArrayList<Coord>();
 	private java.util.ArrayList<Coord> pathAnimationCoord = new ArrayList<Coord>();
@@ -33,7 +39,15 @@ public class NetworkView extends JPanel
 		this.ySize = 100;
 		this.currentTime = 0;
 		this.setSize(700, 700);
+		this.setBackground(Color.white);
 		this.setLocation(300, 0);
+		try {
+			this.desktop = ImageIO.read(new File("img/desktopSmall.png"));
+			this.mail = ImageIO.read(new File("img/message.png"));
+		}catch(IOException ex)
+		{
+			System.out.println("Desktop image download failed");
+		}
 		setUsersCoords();
 		//this.setPreferredSize(new Dimension(100, 100));
 	} 
@@ -64,16 +78,11 @@ public class NetworkView extends JPanel
         for(int i = 0; i < usersCount; i++)
 	    {
         	//paint user
-			g2.setColor(Color.blue);
-
-        	g2.fillOval(usersCoord.get(i).getX() - userSize/2, usersCoord.get(i).getY() - userSize/2, userSize, userSize);
-        	g2.setStroke(new BasicStroke(3));
-        	g2.setColor(Color.orange);
-        	g2.drawOval(usersCoord.get(i).getX() - userSize/2, usersCoord.get(i).getY() - userSize/2, userSize, userSize);
+			g2.drawImage(desktop,usersCoord.get(i).getX() - userSize/2, usersCoord.get(i).getY()-userSize/2,null);
         	//paint lines between users
         	for(int j = 0; j < i; j++)
         	{
-        		g2.setColor(Color.red);
+        		g2.setColor(Color.gray);
         		g2.drawLine(usersCoord.get(j).getX(),
         					usersCoord.get(j).getY(),
         					usersCoord.get(i).getX(),
@@ -117,12 +126,9 @@ public class NetworkView extends JPanel
         	//System.out.println("rev " + rev);
         	lenNewX = (int)(rev * (double)(lenXOrig));
         	lenNewY = (int)(rev * (double)(lenYOrig));
-        	//System.out.println("Len new x " + lenNewX + " y " + lenNewY);
 
-        	g2.setColor(Color.green);
-        	//System.out.println("X new : " + lenXOrig + " Y new : " + lenYOrig);
-        	g2.drawOval(pathAnimationCoord.get(i).getX() + (lenNewX)*togX - messageSize/2,pathAnimationCoord.get(i).getY() + (lenNewY)*togY - messageSize/2, messageSize, messageSize);
-        }
+			g2.drawImage(mail,pathAnimationCoord.get(i).getX() + (lenNewX)*togX - messageSize/2, pathAnimationCoord.get(i).getY() + (lenNewY)*togY - messageSize/2, messageSize, messageSize, null );
+     }
 
 
         repaint();

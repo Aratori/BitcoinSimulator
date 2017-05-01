@@ -26,6 +26,7 @@ public class PauseButton extends JMenuItem implements ActionListener{
         paused = false;
 
         setIcon(pauseIcon);
+        setText("PAUSE");
         //pauseButton.setSize(width, height);
         repaint();
     }

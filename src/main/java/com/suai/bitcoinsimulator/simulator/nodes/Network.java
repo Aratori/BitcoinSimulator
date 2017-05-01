@@ -13,9 +13,9 @@ public class Network extends Node {
     private ArrayList<User> users;
     private static Logger log = Logger.getLogger(Network.class.getName());
     private NetworkView view;
-    private PriorityQueue<Integer> sendersId = new PriorityQueue<Integer>();
-    private PriorityQueue<Integer> receiversId = new PriorityQueue<Integer>();
-    private ArrayList<Message> messages = new ArrayList<Message>();
+    private LinkedList<Integer> sendersId = new LinkedList<Integer>();
+    private LinkedList<Integer> receiversId = new LinkedList<Integer>();
+    private LinkedList<Message> messages = new LinkedList<Message>();
     private int delay;      //задержка на пересылку сообщения
 
     public Network(BitcoinSimulator bs, int delay) {
@@ -43,15 +43,15 @@ public class Network extends Node {
         //пробегаем по всем нодам и отправляем им сообщения
         for(int i = 0; i < users.size(); i++)
         {
-            if(i == senderId)
-                continue;
-            sendersId.add(senderId);
-            receiversId.add(i);
-            messages.add(message);
-            bs.addEvent(new Event(bs.getCurrentTime() + delay, this));
-            //запускаем отсюда анимацию
-            if(bs.getGUI() != null)
-                bs.getGUI().addSendAnimation(senderId, i, bs.getCurrentTime(), bs.getCurrentTime() + delay);
+            if(i != senderId) {
+                sendersId.addLast(senderId);
+                receiversId.addLast(i);
+                messages.addLast(message);
+                bs.addEvent(new Event(bs.getCurrentTime() + delay, this));
+                //запускаем отсюда анимацию
+                if (bs.getGUI() != null)
+                    bs.getGUI().addSendAnimation(senderId, i, bs.getCurrentTime(), bs.getCurrentTime() + delay);
+            }
         }
     }
     /*
@@ -69,8 +69,7 @@ public class Network extends Node {
     }
     //получение сообщения пользователя
     public void onEvent(Event event) {
-        users.get(receiversId.poll()).receiveMessage(sendersId.poll(), messages.get(0));
-        messages.remove(0);
+        users.get(receiversId.removeFirst()).receiveMessage(sendersId.removeFirst(), messages.removeFirst());
     }
 
     public int getDelay()

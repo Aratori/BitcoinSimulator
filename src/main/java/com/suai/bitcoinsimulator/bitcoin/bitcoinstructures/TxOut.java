@@ -16,9 +16,14 @@ public class TxOut {
     }
 
     //test cond
-    private boolean txOutputVerification(int privKey)
+    public boolean txOutputVerification(int privKey)
     {
         return privKey == (cond + 42);
+    }
+
+    public int getSatoshisCount()
+    {
+        return satoshisCount;
     }
 
 }
