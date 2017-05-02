@@ -11,8 +11,8 @@ import java.awt.event.ActionListener;
  */
 public class PauseButton extends JMenuItem implements ActionListener{
     private boolean paused;
-    ImageIcon pauseIcon = new ImageIcon("pause2.png");
-    ImageIcon resumeIcon = new ImageIcon("resume2.png");
+    ImageIcon pauseIcon = new ImageIcon("img/pause2.png");
+    ImageIcon resumeIcon = new ImageIcon("img/resume2.png");
     private BitcoinSimulator bs;
 
     public PauseButton(BitcoinSimulator bs, int width, int height)
