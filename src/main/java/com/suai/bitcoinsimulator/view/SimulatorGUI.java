@@ -22,7 +22,10 @@ public class SimulatorGUI extends JFrame implements ViewManager {
     private int usersCount;
     private DefaultListModel logModel = new DefaultListModel();
     private JList log = new JList(logModel);                            //	list of log's messages that will show on left side
-    private JLabel debugInfo = new JLabel();
+    JTextArea debugInfo = new JTextArea ("DebugInfo");
+    JScrollPane scrollableDebugInfo = new JScrollPane (debugInfo,
+            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
     private PauseButton pauseButton;
     // app
 
@@ -54,7 +57,7 @@ public class SimulatorGUI extends JFrame implements ViewManager {
         debugSplit.setOneTouchExpandable(true);
         debugSplit.setDividerLocation(550);
         debugSplit.setTopComponent(network);
-        debugSplit.setBottomComponent(debugInfo);
+        debugSplit.setBottomComponent(scrollableDebugInfo);
 
         split.setRightComponent(debugSplit);
         split.setLeftComponent(logScrollPane);

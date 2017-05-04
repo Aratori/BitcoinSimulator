@@ -28,4 +28,15 @@ public class BlockChain {
     {
         return blockchain.size();
     }
+
+    @Override
+    public String toString()
+    {
+        String str = "BlockChain:\n";
+
+        for(int i = 0; i < blockchain.size(); i++)
+            str += blockchain.get(i).toString() + "\n";
+
+        return str;
+    }
 }

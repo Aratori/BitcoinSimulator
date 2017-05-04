@@ -11,8 +11,11 @@ import com.suai.bitcoinsimulator.bitcoin.messages.PubKeyMessage;
 import com.suai.bitcoinsimulator.simulator.events.Event;
 import com.suai.bitcoinsimulator.simulator.messages.Message;
 import com.suai.bitcoinsimulator.simulator.nodes.User;
+import com.suai.bitcoinsimulator.simulator.utils.Crypt;
 import com.suai.bitcoinsimulator.simulator.utils.LogKeeper;
 
+import java.security.KeyPair;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,11 +31,10 @@ public class BitcoinNode extends User {
     private BlockChain blockChain = new BlockChain();
     private static int mineDelay = 50;
     private static int coinbaseReward = 50;
-    private int privKey;
-    private int pubKey;
+    private KeyPair keyPair;
     private int pubKeyHash;
     private Block currentMinedBlock;
-    private Map<Integer, Integer> pubKeys = new HashMap<Integer, Integer>();
+    private Map<Integer, PublicKey> pubKeys = new HashMap<Integer, PublicKey>();
 
     /**
      * Хранит список транзакций, из которых можно совершить вывод.
@@ -47,14 +49,19 @@ public class BitcoinNode extends User {
     private int currentState;
 
     public BitcoinNode(int startTime, int interval, Simulator bs) {
-        super(startTime, interval, bs);
-        //test priv and pub keys
-        pubKey = getId();
-        privKey = getId() + 42;
-        //на старте сразу майним блок, чтобы получить биткоины
-        mineStartBlock();
-        //записываем событие на передачу публичного ключа другим нодам
-        simulator.addEvent(new SendPubKeyEvent(simulator.getCurrentTime() + 4, this));
+
+            super(startTime, interval, bs);
+            //test priv and pub keys
+        try{
+            keyPair = Crypt.generateKeyPair(42);
+            //на старте сразу майним блок, чтобы получить биткоины
+            mineStartBlock();
+            //записываем событие на передачу публичного ключа другим нодам
+            simulator.addEvent(new SendPubKeyEvent(simulator.getCurrentTime() + 4, this));
+        }catch(Exception ex)
+        {
+            LogKeeper.info("Can't generate key pair for node " + getId(), simulator.getCurrentTime());
+        }
     }
 
     @Override
@@ -65,7 +72,7 @@ public class BitcoinNode extends User {
         if(event instanceof SendPubKeyEvent)
         {
             LogKeeper.info("User " + getId() + " send pubkey to other nodes", simulator.getCurrentTime());
-            PubKeyMessage message = new PubKeyMessage("Pubkey of  user " + getId(), pubKey);
+            PubKeyMessage message = new PubKeyMessage("Pubkey of  user " + getId(), keyPair.getPublic());
             simulator.getNetwork().sendMessageToAll(getId(), message);
         }
 
@@ -81,20 +88,27 @@ public class BitcoinNode extends User {
         {
             //получатель
             int receiver = simulator.getNetwork().getRandomUser(getId());
-            int receiverPubKey = pubKeys.get(receiver);
+            PublicKey receiverPubKey = pubKeys.get(receiver);
             //транзакция-источник
             Transaction tx = myTransactions.get(0);
 
             //вход
             //в данном случае вход без подписи
+            byte[] signature = null;
+            try {
+                signature = Crypt.signData(keyPair.getPublic().toString().getBytes(), keyPair.getPrivate());
+            }catch(Exception ex)
+            {
+                System.err.println("Signature creation failed");
+            }
             TxIn input = new TxIn(
                     tx.getTxId(),       //TxId транзакции-источника
-                    tx.checkCondition(privKey), //индекс выхода на транзакции-источнике
-                    null);              //подпись(сейчас не действительна)
+                    tx.checkCondition(keyPair.getPublic().toString().getBytes(), signature), //индекс выхода на транзакции-источнике
+                    signature);              //подпись(сейчас не действительна)
             //выход
             TxOut output = new TxOut(tx.getOutput(
-                                        tx.checkCondition(privKey)).getSatoshisCount(), //количество биткоинов на выходе
-                                        pubKey);                                        //условие выхода(сейчас не работает)
+                                        tx.checkCondition(keyPair.getPublic().toString().getBytes(), signature)).getSatoshisCount(), //количество биткоинов на выходе
+                                        keyPair.getPublic());                                        //условие выхода(сейчас не работает)
             mineBlock(input, output);
         }
 
@@ -154,7 +168,7 @@ public class BitcoinNode extends User {
         currentMinedBlock = new Block();
         //создаем транзакцию с выплатой создателю блока
         Transaction coinbaseTx = new Transaction();
-        coinbaseTx.addOutput(new TxOut(coinbaseReward, pubKey));
+        coinbaseTx.addOutput(new TxOut(coinbaseReward, keyPair.getPublic()));
         currentMinedBlock.addTransaction(coinbaseTx);
         //добавлем событие, на момент, когда блок смайнится
         simulator.addEvent(new BlockMinedEvent(simulator.getCurrentTime() + mineDelay + interval, this));
@@ -172,7 +186,7 @@ public class BitcoinNode extends User {
         currentMinedBlock = new Block();
         //set coinbase transaction
         Transaction coinbaseTx = new Transaction();
-        coinbaseTx.addOutput(new TxOut(coinbaseReward, pubKey));
+        coinbaseTx.addOutput(new TxOut(coinbaseReward, keyPair.getPublic()));
         currentMinedBlock.addTransaction(coinbaseTx);
         //set base transaction
         Transaction tx = new Transaction();
@@ -191,7 +205,13 @@ public class BitcoinNode extends User {
     //!!!!! ДОБАВИТЬ ПРОВЕРКУ, ЧТО ИЗ ТРАНЗАКЦИИ НЕ БЫЛИ УЖЕ ПЕРЕВЕДЕНЫ БИТКОИНЫ
     public void findMyTransactions() {
         myTransactions = new ArrayList<Transaction>();
-
+        byte[] signature = null;
+        try {
+            signature = Crypt.signData(keyPair.getPublic().toString().getBytes(), keyPair.getPrivate());
+        }catch(Exception ex)
+        {
+            System.err.println("Signature creation failed");
+        }
         //идем по блокам
         for (int i = 0; i < blockChain.size(); i++)
         {
@@ -200,7 +220,7 @@ public class BitcoinNode extends User {
             for(int j = 0; j < block.size(); j++)
             {
                 Transaction tx = block.getTransaction(j);
-                if(tx.checkCondition(privKey) != -1)
+                if(tx.checkCondition(keyPair.getPublic().toString().getBytes(), signature) != -1)
                     myTransactions.add(tx);
             }
         }
@@ -213,5 +233,13 @@ public class BitcoinNode extends User {
     public void sendPubKey()
     {
 
+    }
+
+    @Override
+    public String toString()
+    {
+        String str = "Bitcoin Node " + Integer.toString(getId()) + "\n";
+        str += blockChain.toString();
+        return str;
     }
 }

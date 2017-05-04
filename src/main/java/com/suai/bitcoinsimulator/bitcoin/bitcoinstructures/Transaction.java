@@ -1,5 +1,6 @@
 package com.suai.bitcoinsimulator.bitcoin.bitcoinstructures;
 
+import java.security.PrivateKey;
 import java.util.ArrayList;
 
 /**
@@ -26,11 +27,11 @@ public class Transaction {
      * @param privKey
      * @return  возвращает индекс нужного выхода
      */
-    public int checkCondition(int privKey)
+    public int checkCondition(byte[] data, byte[] signature)
     {
         for(int i = 0; i < outputs.size(); i++)
         {
-            if(outputs.get(i).txOutputVerification(privKey))
+            if(outputs.get(i).txOutputVerification(data, signature))
                 return i;
         }
 
@@ -60,5 +61,17 @@ public class Transaction {
     public int getTxId()
     {
         return TxId;
+    }
+
+    @Override
+    public String toString()
+    {
+        String str = "Transaction " + TxId + "\n";
+        str += "Outputs:\n";
+        for(int i = 0; i < outputs.size(); i++)
+            str += outputs.get(i).toString() + "\n";
+        for(int i = 0; i < inputs.size(); i++)
+            str += inputs.get(i).toString() + "\n";
+        return str;
     }
 }

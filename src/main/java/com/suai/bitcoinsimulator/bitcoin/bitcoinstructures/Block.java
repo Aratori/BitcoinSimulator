@@ -24,4 +24,14 @@ public class Block {
     {
         transactions.add(transaction);
     }
+
+    public String toString()
+    {
+        String str = "Block:\n";
+
+        for(int i = 0; i < transactions.size(); i++)
+            str += transactions.get(i).toString() + "\n";
+
+        return str;
+    }
 }

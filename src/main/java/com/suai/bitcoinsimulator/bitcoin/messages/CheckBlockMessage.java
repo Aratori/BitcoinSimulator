@@ -20,4 +20,12 @@ public class CheckBlockMessage extends Message {
         return block;
     }
 
+    @Override
+    public String toString()
+    {
+        String str = getInfoMessage() + "\n";
+        str += block.toString();
+
+        return str;
+    }
 }

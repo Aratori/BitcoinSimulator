@@ -5,6 +5,7 @@ import com.suai.bitcoinsimulator.bitcoin.bitcoinstructures.Transaction;
 import com.suai.bitcoinsimulator.bitcoin.bitcoinstructures.TxOut;
 import com.suai.bitcoinsimulator.bitcoin.nodes.BitcoinNode;
 import com.suai.bitcoinsimulator.simulator.nodes.User;
+import com.suai.bitcoinsimulator.simulator.utils.Crypt;
 
 import java.io.UnsupportedEncodingException;
 import java.security.*;
@@ -14,7 +15,7 @@ import java.security.*;
  */
 public class Main {
 
-    public static void testJCE()
+    /*public static void testJCE()
     {
         try {
             //выбираем хэш-функцию
@@ -56,50 +57,17 @@ public class Main {
         {
 
         }
-    }
+    }*/
 
-    public static byte[] signData(byte[] data, PrivateKey key) throws Exception {
-        Signature signer = Signature.getInstance("SHA1withDSA");
-        signer.initSign(key);
-        signer.update(data);
-        return (signer.sign());
-    }
+    public static void main(String[] args) {
+        Simulator bs = new Simulator(400, 6, 100, true);
+        User userOne = new BitcoinNode(10, 20, bs);
+        User userTwo = new BitcoinNode(20, 30, bs);
+        User userThree = new BitcoinNode(15, 40, bs);
+        User userFour = new BitcoinNode(80, 10, bs);
+        User userFive = new BitcoinNode(45, 50, bs);
+        User userSix = new BitcoinNode(45, 60, bs);
 
-    public static boolean verifySig(byte[] data, PublicKey key, byte[] sig) throws Exception {
-        Signature signer = Signature.getInstance("SHA1withDSA");
-        signer.initVerify(key);
-        signer.update(data);
-        return (signer.verify(sig));
-
-    }
-
-    public static KeyPair generateKeyPair(long seed) throws Exception {
-        KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("DSA");
-        SecureRandom rng = SecureRandom.getInstance("SHA1PRNG", "SUN");
-        rng.setSeed(seed);
-        keyGenerator.initialize(1024, rng);
-
-        return (keyGenerator.generateKeyPair());
-    }
-
-    public static void main(String[] args)
-    {
-        boolean JCETest = false;
-
-        if(!JCETest) {
-            Simulator bs = new Simulator(400, 6, 100, true);
-            User userOne = new BitcoinNode(10, 20, bs);
-            User userTwo = new BitcoinNode(20, 30, bs);
-            User userThree = new BitcoinNode(15, 40, bs);
-            User userFour = new BitcoinNode(80, 10, bs);
-            User userFive = new BitcoinNode(45, 50, bs);
-            User userSix = new BitcoinNode(45, 60, bs);
-
-            bs.startSimulation();
-        }
-        else
-        {
-            testJCE();
-        }
+        bs.startSimulation();
     }
 }
