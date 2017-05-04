@@ -26,13 +26,23 @@ public class NetworkView extends JPanel
 	private BufferedImage mail;
 	private SimulatorGUI gui;
 	private java.util.ArrayList<Coord> usersCoord = new ArrayList<Coord>();
+	private java.util.ArrayList<Integer> sendersId = new ArrayList<Integer>();
 	private java.util.ArrayList<Coord> pathAnimationCoord = new ArrayList<Coord>();
 	private java.util.ArrayList<Integer>   startEndAnimation = new ArrayList<Integer>();
+	private java.util.ArrayList<Color> usersColors = new ArrayList<Color>();
 
 	public NetworkView(SimulatorGUI gui, int usersCount){
 		super();
 		this.gui = gui;
 		this.usersCount = usersCount;
+		//set colors
+		Random rand = new Random(45);
+		for(int i = 0; i < usersCount; i++)
+			usersColors.add(new Color(
+					rand.nextInt(255),
+					rand.nextInt(255),
+					rand.nextInt(255)
+			));
 		this.xLoc = 500;
 		this.yLoc = 350;
 		this.xSize = 100;
@@ -43,7 +53,7 @@ public class NetworkView extends JPanel
 		this.setLocation(300, 0);
 		try {
 			this.desktop = ImageIO.read(new File("img/desktopSmall.png"));
-			this.mail = ImageIO.read(new File("img/message.png"));
+			this.mail = ImageIO.read(new File("img/messageSmall.png"));
 		}catch(IOException ex)
 		{
 			System.out.println("Desktop image download failed");
@@ -77,8 +87,11 @@ public class NetworkView extends JPanel
         //paint users and connections
         for(int i = 0; i < usersCount; i++)
 	    {
+	    	//paint background
+			g2.setColor(usersColors.get(i));
+			g2.fillRect(usersCoord.get(i).getX() - userSize/2, usersCoord.get(i).getY()-userSize/2, userSize, userSize);
         	//paint user
-			g2.drawImage(desktop,usersCoord.get(i).getX() - userSize/2, usersCoord.get(i).getY()-userSize/2,null);
+			g2.drawImage(desktop,usersCoord.get(i).getX() - userSize/2, usersCoord.get(i).getY()-userSize/2, userSize, userSize, null);
         	//paint lines between users
         	for(int j = 0; j < i; j++)
         	{
@@ -126,7 +139,10 @@ public class NetworkView extends JPanel
         	//System.out.println("rev " + rev);
         	lenNewX = (int)(rev * (double)(lenXOrig));
         	lenNewY = (int)(rev * (double)(lenYOrig));
-
+			//paint background
+			g2.setColor(usersColors.get(sendersId.get(i/2)));
+        	g2.fillRect(pathAnimationCoord.get(i).getX() + (lenNewX)*togX - messageSize/2, pathAnimationCoord.get(i).getY() + (lenNewY)*togY - messageSize/2, messageSize, messageSize);
+        	//paint message
 			g2.drawImage(mail,pathAnimationCoord.get(i).getX() + (lenNewX)*togX - messageSize/2, pathAnimationCoord.get(i).getY() + (lenNewY)*togY - messageSize/2, messageSize, messageSize, null );
      }
 
@@ -146,7 +162,8 @@ public class NetworkView extends JPanel
 
     public void addPathAnimation(int node1, int node2, int start, int duration)
     {
-    	System.out.println("Path anim set: start " + start + " end " + (start+duration))	;
+    	System.out.println("Path anim set: start " + start + " end " + (start+duration));
+    	sendersId.add(node1);
     	pathAnimationCoord.add(usersCoord.get(node1));
     	pathAnimationCoord.add(usersCoord.get(node2));
     	startEndAnimation.add(start);

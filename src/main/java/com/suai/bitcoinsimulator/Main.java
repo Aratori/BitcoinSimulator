@@ -84,7 +84,7 @@ public class Main {
 
     public static void main(String[] args)
     {
-        boolean JCETest = true;
+        boolean JCETest = false;
 
         if(!JCETest) {
             BitcoinSimulator bs = new BitcoinSimulator(400, 6, 100, true);
