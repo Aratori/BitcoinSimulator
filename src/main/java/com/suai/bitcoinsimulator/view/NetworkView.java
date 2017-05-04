@@ -3,22 +3,21 @@ package com.suai.bitcoinsimulator.view;
 import java.awt.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.*;
 import java.util.*;
 
+import com.suai.bitcoinsimulator.simulator.messages.Message;
 import com.suai.bitcoinsimulator.simulator.utils.Coord;
+import com.suai.bitcoinsimulator.view.listeners.NetworkMouseListener;
 
 public class NetworkView extends JPanel
 {
-	private int xLoc;
-	private int yLoc;
-	private int xSize;
-	private int ySize;
 	private int usersCount;
-	private int radius = 300;
 	private int userSize = 80;
 	private int messageSize = 30;
 	private int currentTime;
@@ -26,6 +25,8 @@ public class NetworkView extends JPanel
 	private BufferedImage mail;
 	private SimulatorGUI gui;
 	private java.util.ArrayList<Coord> usersCoord = new ArrayList<Coord>();
+	private java.util.ArrayList<Coord> messagesCoord = new ArrayList<Coord>();
+	private java.util.ArrayList<Message> messagesInfo = new ArrayList<Message>();
 	private java.util.ArrayList<Integer> sendersId = new ArrayList<Integer>();
 	private java.util.ArrayList<Coord> pathAnimationCoord = new ArrayList<Coord>();
 	private java.util.ArrayList<Integer>   startEndAnimation = new ArrayList<Integer>();
@@ -43,12 +44,8 @@ public class NetworkView extends JPanel
 					rand.nextInt(255),
 					rand.nextInt(255)
 			));
-		this.xLoc = 500;
-		this.yLoc = 350;
-		this.xSize = 100;
-		this.ySize = 100;
 		this.currentTime = 0;
-		this.setSize(700, 700);
+		this.setSize(700, 550);
 		this.setBackground(Color.white);
 		this.setLocation(300, 0);
 		try {
@@ -59,7 +56,7 @@ public class NetworkView extends JPanel
 			System.out.println("Desktop image download failed");
 		}
 		setUsersCoords();
-		//this.setPreferredSize(new Dimension(100, 100));
+		this.addMouseListener(new NetworkMouseListener(gui, this, usersCoord, userSize, messageSize));
 	} 
 
 	public void setUsersCoords()
@@ -105,7 +102,7 @@ public class NetworkView extends JPanel
         }
 
         //paint path animation
-        for(int i = 0; i < pathAnimationCoord.size(); i+=2)
+        for(int i = 0, j = 0; i < pathAnimationCoord.size(); i+=2, j++)
         {
         	currentTime = gui.getSimulator().getCurrentTime();
         	if((currentTime - startEndAnimation.get(i + 1)) > 1)
@@ -142,17 +139,11 @@ public class NetworkView extends JPanel
 			//paint background
 			g2.setColor(usersColors.get(sendersId.get(i/2)));
         	g2.fillRect(pathAnimationCoord.get(i).getX() + (lenNewX)*togX - messageSize/2, pathAnimationCoord.get(i).getY() + (lenNewY)*togY - messageSize/2, messageSize, messageSize);
-        	//paint message
+        	//paint message and put new coordinates
 			g2.drawImage(mail,pathAnimationCoord.get(i).getX() + (lenNewX)*togX - messageSize/2, pathAnimationCoord.get(i).getY() + (lenNewY)*togY - messageSize/2, messageSize, messageSize, null );
+			messagesCoord.get(j).setX(pathAnimationCoord.get(i).getX() + (lenNewX)*togX);
+			messagesCoord.get(j).setY(pathAnimationCoord.get(i).getY() + (lenNewY)*togY);
      }
-
-
-        repaint();
-    }
-
-    public Coord getCenter()
-    {
-    	return new Coord(xLoc + xSize/2, yLoc + ySize/2);
     }
 
     public void setCurrentTime(int currentTime)
@@ -160,14 +151,25 @@ public class NetworkView extends JPanel
     	this.currentTime = currentTime;
     }
 
-    public void addPathAnimation(int node1, int node2, int start, int duration)
+    public void addPathAnimation(int node1, int node2, int start, int duration, Message message)
     {
     	System.out.println("Path anim set: start " + start + " end " + (start+duration));
     	sendersId.add(node1);
     	pathAnimationCoord.add(usersCoord.get(node1));
     	pathAnimationCoord.add(usersCoord.get(node2));
+    	messagesCoord.add(new Coord(usersCoord.get(node1).getX(), usersCoord.get(node1).getY()));
+    	messagesInfo.add(message);
     	startEndAnimation.add(start);
     	startEndAnimation.add(start+duration);
     }
 
+    public ArrayList<Coord> getMessagesCoord()
+	{
+		return messagesCoord;
+	}
+
+	public Message getMessage(int index)
+	{
+		return messagesInfo.get(index);
+	}
 }

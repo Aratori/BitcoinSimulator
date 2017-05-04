@@ -1,6 +1,6 @@
 package com.suai.bitcoinsimulator.view;
 
-import com.suai.bitcoinsimulator.bitcoin.BitcoinSimulator;
+import com.suai.bitcoinsimulator.simulator.Simulator;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -13,9 +13,9 @@ public class PauseButton extends JMenuItem implements ActionListener{
     private boolean paused;
     ImageIcon pauseIcon = new ImageIcon("img/pause2.png");
     ImageIcon resumeIcon = new ImageIcon("img/resume2.png");
-    private BitcoinSimulator bs;
+    private Simulator bs;
 
-    public PauseButton(BitcoinSimulator bs, int width, int height)
+    public PauseButton(Simulator bs, int width, int height)
     {
         super();
         this.bs = bs;

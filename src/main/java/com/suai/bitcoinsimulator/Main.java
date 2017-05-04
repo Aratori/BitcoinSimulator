@@ -1,6 +1,6 @@
 package com.suai.bitcoinsimulator;
 
-import com.suai.bitcoinsimulator.bitcoin.BitcoinSimulator;
+import com.suai.bitcoinsimulator.simulator.Simulator;
 import com.suai.bitcoinsimulator.bitcoin.bitcoinstructures.Transaction;
 import com.suai.bitcoinsimulator.bitcoin.bitcoinstructures.TxOut;
 import com.suai.bitcoinsimulator.bitcoin.nodes.BitcoinNode;
@@ -87,7 +87,7 @@ public class Main {
         boolean JCETest = false;
 
         if(!JCETest) {
-            BitcoinSimulator bs = new BitcoinSimulator(400, 6, 100, true);
+            Simulator bs = new Simulator(400, 6, 100, true);
             User userOne = new BitcoinNode(10, 20, bs);
             User userTwo = new BitcoinNode(20, 30, bs);
             User userThree = new BitcoinNode(15, 40, bs);

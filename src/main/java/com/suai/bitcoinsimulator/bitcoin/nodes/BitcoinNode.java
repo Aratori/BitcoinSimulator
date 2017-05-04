@@ -1,10 +1,10 @@
 package com.suai.bitcoinsimulator.bitcoin.nodes;
 
 
+import com.suai.bitcoinsimulator.simulator.Simulator;
 import com.suai.bitcoinsimulator.bitcoin.bitcoinstructures.*;
 import com.suai.bitcoinsimulator.bitcoin.events.BlockCheckedEvent;
 import com.suai.bitcoinsimulator.bitcoin.events.BlockMinedEvent;
-import com.suai.bitcoinsimulator.bitcoin.BitcoinSimulator;
 import com.suai.bitcoinsimulator.bitcoin.events.SendPubKeyEvent;
 import com.suai.bitcoinsimulator.bitcoin.messages.CheckBlockMessage;
 import com.suai.bitcoinsimulator.bitcoin.messages.PubKeyMessage;
@@ -15,7 +15,6 @@ import com.suai.bitcoinsimulator.simulator.utils.LogKeeper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 /**
@@ -47,7 +46,7 @@ public class BitcoinNode extends User {
      */
     private int currentState;
 
-    public BitcoinNode(int startTime, int interval, BitcoinSimulator bs) {
+    public BitcoinNode(int startTime, int interval, Simulator bs) {
         super(startTime, interval, bs);
         //test priv and pub keys
         pubKey = getId();

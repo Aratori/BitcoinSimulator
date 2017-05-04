@@ -1,16 +1,16 @@
 package com.suai.bitcoinsimulator.simulator.utils;
 
 import java.util.TimerTask;
-import com.suai.bitcoinsimulator.bitcoin.BitcoinSimulator;
+import com.suai.bitcoinsimulator.simulator.Simulator;
 
 
 /**
 *Update model and gui
 */
 public class StepUpdater extends TimerTask {
- 	private static BitcoinSimulator bs;
+ 	private static Simulator bs;
 
- 	public static  void setBitcoinSimulator(BitcoinSimulator bss)
+ 	public static  void setBitcoinSimulator(Simulator bss)
  	{
  		bs = bss;
  	}

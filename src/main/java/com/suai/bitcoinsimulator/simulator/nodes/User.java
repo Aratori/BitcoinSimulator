@@ -1,6 +1,6 @@
 package com.suai.bitcoinsimulator.simulator.nodes;
 
-import com.suai.bitcoinsimulator.bitcoin.BitcoinSimulator;
+import com.suai.bitcoinsimulator.simulator.Simulator;
 import com.suai.bitcoinsimulator.simulator.events.Event;
 import com.suai.bitcoinsimulator.simulator.messages.Message;
 import com.suai.bitcoinsimulator.simulator.utils.LogKeeper;
@@ -15,7 +15,7 @@ public class User extends Node {
     private static int userCounter = 0;             //counter, that give id to users
     protected int userId;                             //id
     protected int interval;
-    protected BitcoinSimulator simulator;
+    protected Simulator simulator;
     protected static Logger log = Logger.getLogger(User.class.getName());
 
     /**
@@ -24,7 +24,7 @@ public class User extends Node {
      * @param intervalTime  -   time period for generation new event
      * @param simulator -   base class of simulator
      */
-    public User(int startTime, int intervalTime, BitcoinSimulator simulator) {
+    public User(int startTime, int intervalTime, Simulator simulator) {
         this.simulator = simulator;
         this.interval = intervalTime;
         this.simulator.getNetwork().registration(this);
@@ -56,5 +56,11 @@ public class User extends Node {
     public int getId()
     {
         return userId;
+    }
+
+    @Override
+    public String toString()
+    {
+        return (String)("Network user " + getId());
     }
 }    

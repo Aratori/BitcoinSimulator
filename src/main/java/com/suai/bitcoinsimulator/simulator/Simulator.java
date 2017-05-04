@@ -1,4 +1,4 @@
-package com.suai.bitcoinsimulator.bitcoin;
+package com.suai.bitcoinsimulator.simulator;
 
 import com.suai.bitcoinsimulator.simulator.events.Event;
 import com.suai.bitcoinsimulator.simulator.nodes.Network;
@@ -11,7 +11,7 @@ import com.suai.bitcoinsimulator.view.SimulatorGUI;
 import java.util.*;
 
 
-public class BitcoinSimulator{
+public class Simulator {
     private int endTime;
     private int currentTime;
     private Network network;
@@ -23,13 +23,13 @@ public class BitcoinSimulator{
     private int step;               //quantity of real time for 1 programm time
 
     /**
-     * BitcoinSimulator constructor
+     * Simulator constructor
      * @param endTime   - time, when simulator work will run out
      * @param usersCount    -   count of users in system.
      * @param step  -   update period
      * @param mode  -   GUI/TEXT modes
      */
-    public BitcoinSimulator(int endTime, int usersCount, int step, boolean mode) {
+    public Simulator(int endTime, int usersCount, int step, boolean mode) {
         this.endTime = endTime;
         this.currentTime = 0;
         this.events = new PriorityBlockingQueue<Event>();

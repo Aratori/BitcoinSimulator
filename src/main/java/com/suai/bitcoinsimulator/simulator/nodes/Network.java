@@ -1,6 +1,6 @@
 package com.suai.bitcoinsimulator.simulator.nodes;
 
-import com.suai.bitcoinsimulator.bitcoin.BitcoinSimulator;
+import com.suai.bitcoinsimulator.simulator.Simulator;
 import com.suai.bitcoinsimulator.simulator.events.Event;
 import com.suai.bitcoinsimulator.simulator.messages.Message;
 import com.suai.bitcoinsimulator.view.NetworkView;
@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class Network extends Node {
-    private BitcoinSimulator bs;
+    private Simulator bs;
     private ArrayList<User> users;
     private static Logger log = Logger.getLogger(Network.class.getName());
     private NetworkView view;
@@ -18,7 +18,7 @@ public class Network extends Node {
     private LinkedList<Message> messages = new LinkedList<Message>();
     private int delay;      //задержка на пересылку сообщения
 
-    public Network(BitcoinSimulator bs, int delay) {
+    public Network(Simulator bs, int delay) {
         this.bs = bs;
         this.delay = delay;
         users = new ArrayList<User>();
@@ -50,7 +50,7 @@ public class Network extends Node {
                 bs.addEvent(new Event(bs.getCurrentTime() + delay, this));
                 //запускаем отсюда анимацию
                 if (bs.getGUI() != null)
-                    bs.getGUI().addSendAnimation(senderId, i, bs.getCurrentTime(), bs.getCurrentTime() + delay);
+                    bs.getGUI().addSendAnimation(senderId, i, bs.getCurrentTime(), bs.getCurrentTime() + delay, message);
             }
         }
     }
@@ -66,6 +66,11 @@ public class Network extends Node {
         }while(id == currentUser);
 
         return id;
+    }
+
+    public User getUser(int index)
+    {
+        return users.get(index);
     }
     //получение сообщения пользователя
     public void onEvent(Event event) {
