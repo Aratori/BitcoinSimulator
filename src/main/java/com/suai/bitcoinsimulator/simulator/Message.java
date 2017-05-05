@@ -1,4 +1,4 @@
-package com.suai.bitcoinsimulator.simulator.messages;
+package com.suai.bitcoinsimulator.simulator;
 
 /**
  * Message to send

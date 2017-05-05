@@ -1,6 +1,6 @@
 package com.suai.bitcoinsimulator.view;
 
-import com.suai.bitcoinsimulator.simulator.messages.Message;
+import com.suai.bitcoinsimulator.simulator.Message;
 
 /**
  * Created by anton on 25.04.17.

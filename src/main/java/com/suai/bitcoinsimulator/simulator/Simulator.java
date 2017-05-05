@@ -1,6 +1,5 @@
 package com.suai.bitcoinsimulator.simulator;
 
-import com.suai.bitcoinsimulator.simulator.events.Event;
 import com.suai.bitcoinsimulator.simulator.nodes.Network;
 
 import java.util.concurrent.PriorityBlockingQueue;

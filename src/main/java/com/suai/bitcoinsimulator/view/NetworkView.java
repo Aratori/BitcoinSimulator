@@ -3,15 +3,13 @@ package com.suai.bitcoinsimulator.view;
 import java.awt.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.*;
 import java.util.*;
 
-import com.suai.bitcoinsimulator.simulator.messages.Message;
+import com.suai.bitcoinsimulator.simulator.Message;
 import com.suai.bitcoinsimulator.simulator.utils.Coord;
 import com.suai.bitcoinsimulator.view.listeners.NetworkMouseListener;
 
@@ -100,14 +98,18 @@ public class NetworkView extends JPanel
         	}
         	
         }
-
+		boolean lastDeleted = false;
+        ArrayList<Integer> deleteThis = new ArrayList<Integer>();
         //paint path animation
         for(int i = 0, j = 0; i < pathAnimationCoord.size(); i+=2, j++)
         {
         	currentTime = gui.getSimulator().getCurrentTime();
-        	if((currentTime - startEndAnimation.get(i + 1)) > 1)
-        		continue;
-        	//System.out.println("Anim size " + (pathAnimationCoord.size()/2));
+        	//если сообщение прошло свой путь убираем из списка
+        	if((currentTime - startEndAnimation.get(i + 1)) > 0) {
+        		deleteThis.add(j);
+				continue;
+			}
+			//System.out.println("Anim size " + (pathAnimationCoord.size()/2));
         	int lenXOrig;
         	int lenYOrig;
         	int lenNewX;
@@ -143,8 +145,24 @@ public class NetworkView extends JPanel
 			g2.drawImage(mail,pathAnimationCoord.get(i).getX() + (lenNewX)*togX - messageSize/2, pathAnimationCoord.get(i).getY() + (lenNewY)*togY - messageSize/2, messageSize, messageSize, null );
 			messagesCoord.get(j).setX(pathAnimationCoord.get(i).getX() + (lenNewX)*togX);
 			messagesCoord.get(j).setY(pathAnimationCoord.get(i).getY() + (lenNewY)*togY);
-     }
+     	}
+     	deleteClosedAnimation(deleteThis);
     }
+
+    private void deleteClosedAnimation(ArrayList<Integer> deleteThis)
+	{
+		int offset = 0;
+		for(int i = 0; i < deleteThis.size(); i++) {
+			messagesCoord.remove(deleteThis.get(i)-offset);
+			messagesInfo.remove(deleteThis.get(i)-offset);
+			sendersId.remove(deleteThis.get(i)-offset);//}
+			pathAnimationCoord.remove((deleteThis.get(i)-offset)*2);
+			pathAnimationCoord.remove((deleteThis.get(i)-offset)*2);
+			startEndAnimation.remove((deleteThis.get(i)-offset)*2);
+			startEndAnimation.remove((deleteThis.get(i)-offset)*2);
+			offset++;
+		}
+	}
 
     public void setCurrentTime(int currentTime)
     {

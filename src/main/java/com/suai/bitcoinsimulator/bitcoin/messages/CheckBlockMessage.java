@@ -1,7 +1,7 @@
 package com.suai.bitcoinsimulator.bitcoin.messages;
 
 import com.suai.bitcoinsimulator.bitcoin.bitcoinstructures.Block;
-import com.suai.bitcoinsimulator.simulator.messages.Message;
+import com.suai.bitcoinsimulator.simulator.Message;
 
 /**
  * Created by anton on 28.04.17.

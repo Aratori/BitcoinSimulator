@@ -9,7 +9,7 @@ import java.util.*;
 
 
 import com.suai.bitcoinsimulator.simulator.Simulator;
-import com.suai.bitcoinsimulator.simulator.messages.Message;
+import com.suai.bitcoinsimulator.simulator.Message;
 import com.suai.bitcoinsimulator.view.listeners.SpeedListener;
 
 public class SimulatorGUI extends JFrame implements ViewManager {
@@ -121,11 +121,13 @@ public class SimulatorGUI extends JFrame implements ViewManager {
         debugInfo.setText((String)message.toString());
     }
 
-    public Simulator getSimulator() {
+    public Simulator getSimulator()
+    {
         return bs;
     }
 
-    public synchronized void addLogMessage(String message) {
+    public synchronized void addLogMessage(String message)
+    {
         logModel.addElement(message);
     }
 }

@@ -1,8 +1,8 @@
 package com.suai.bitcoinsimulator.simulator.nodes;
 
 import com.suai.bitcoinsimulator.simulator.Simulator;
-import com.suai.bitcoinsimulator.simulator.events.Event;
-import com.suai.bitcoinsimulator.simulator.messages.Message;
+import com.suai.bitcoinsimulator.simulator.Event;
+import com.suai.bitcoinsimulator.simulator.Message;
 import com.suai.bitcoinsimulator.view.NetworkView;
 
 import java.util.*;
@@ -50,7 +50,7 @@ public class Network extends Node {
                 bs.addEvent(new Event(bs.getCurrentTime() + delay, this));
                 //запускаем отсюда анимацию
                 if (bs.getGUI() != null)
-                    bs.getGUI().addSendAnimation(senderId, i, bs.getCurrentTime(), bs.getCurrentTime() + delay, message);
+                    bs.getGUI().addSendAnimation(senderId, i, bs.getCurrentTime(), delay, message);
             }
         }
     }

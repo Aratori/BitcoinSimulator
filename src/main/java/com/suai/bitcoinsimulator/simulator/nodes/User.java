@@ -1,8 +1,8 @@
 package com.suai.bitcoinsimulator.simulator.nodes;
 
 import com.suai.bitcoinsimulator.simulator.Simulator;
-import com.suai.bitcoinsimulator.simulator.events.Event;
-import com.suai.bitcoinsimulator.simulator.messages.Message;
+import com.suai.bitcoinsimulator.simulator.Event;
+import com.suai.bitcoinsimulator.simulator.Message;
 import com.suai.bitcoinsimulator.simulator.utils.LogKeeper;
 
 import java.util.logging.Logger;
@@ -43,8 +43,8 @@ public class User extends Node {
         int receiverId = simulator.getNetwork().getRandomUser(userId);                    /*receive id of user, whom we can send message*/
         LogKeeper.info("User " + userId + " send message to  user " + receiverId, simulator.getCurrentTime());
         simulator.getNetwork().sendMessage(userId, receiverId, new Message((String)("Message from user " + userId + " user " + receiverId), 0));
-        if(simulator.getGUI() != null)
-            simulator.getGUI().addSendAnimation(userId, receiverId, simulator.getCurrentTime(), simulator.getNetwork().getDelay());
+        //if(simulator.getGUI() != null)
+          //  simulator.getGUI().addSendAnimation(userId, receiverId, simulator.getCurrentTime(), simulator.getNetwork().getDelay());
         }
 
     public void receiveMessage(int senderId, Message message)

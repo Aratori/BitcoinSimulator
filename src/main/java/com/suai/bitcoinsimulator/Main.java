@@ -1,14 +1,8 @@
 package com.suai.bitcoinsimulator;
 
 import com.suai.bitcoinsimulator.simulator.Simulator;
-import com.suai.bitcoinsimulator.bitcoin.bitcoinstructures.Transaction;
-import com.suai.bitcoinsimulator.bitcoin.bitcoinstructures.TxOut;
-import com.suai.bitcoinsimulator.bitcoin.nodes.BitcoinNode;
+import com.suai.bitcoinsimulator.bitcoin.BitcoinNode;
 import com.suai.bitcoinsimulator.simulator.nodes.User;
-import com.suai.bitcoinsimulator.simulator.utils.Crypt;
-
-import java.io.UnsupportedEncodingException;
-import java.security.*;
 
 /**
  * Created by anton on 26.04.17.

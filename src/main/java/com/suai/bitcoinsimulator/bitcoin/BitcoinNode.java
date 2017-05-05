@@ -1,4 +1,4 @@
-package com.suai.bitcoinsimulator.bitcoin.nodes;
+package com.suai.bitcoinsimulator.bitcoin;
 
 
 import com.suai.bitcoinsimulator.simulator.Simulator;
@@ -8,8 +8,8 @@ import com.suai.bitcoinsimulator.bitcoin.events.BlockMinedEvent;
 import com.suai.bitcoinsimulator.bitcoin.events.SendPubKeyEvent;
 import com.suai.bitcoinsimulator.bitcoin.messages.CheckBlockMessage;
 import com.suai.bitcoinsimulator.bitcoin.messages.PubKeyMessage;
-import com.suai.bitcoinsimulator.simulator.events.Event;
-import com.suai.bitcoinsimulator.simulator.messages.Message;
+import com.suai.bitcoinsimulator.simulator.Event;
+import com.suai.bitcoinsimulator.simulator.Message;
 import com.suai.bitcoinsimulator.simulator.nodes.User;
 import com.suai.bitcoinsimulator.simulator.utils.Crypt;
 import com.suai.bitcoinsimulator.simulator.utils.LogKeeper;

@@ -1,6 +1,6 @@
 package com.suai.bitcoinsimulator.bitcoin.events;
 
-import com.suai.bitcoinsimulator.simulator.events.Event;
+import com.suai.bitcoinsimulator.simulator.Event;
 import com.suai.bitcoinsimulator.simulator.nodes.Node;
 
 /**

@@ -1,6 +1,6 @@
 package com.suai.bitcoinsimulator.bitcoin.messages;
 
-import com.suai.bitcoinsimulator.simulator.messages.Message;
+import com.suai.bitcoinsimulator.simulator.Message;
 
 import java.security.PublicKey;
 
