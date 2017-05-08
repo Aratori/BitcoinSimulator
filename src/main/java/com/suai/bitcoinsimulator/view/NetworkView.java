@@ -7,8 +7,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.*;
+import java.security.PublicKey;
 import java.util.*;
 
+import com.suai.bitcoinsimulator.bitcoin.BitcoinNode;
 import com.suai.bitcoinsimulator.simulator.Message;
 import com.suai.bitcoinsimulator.simulator.utils.Coord;
 import com.suai.bitcoinsimulator.view.listeners.NetworkMouseListener;
@@ -22,6 +24,7 @@ public class NetworkView extends JPanel
 	private BufferedImage desktop;
 	private BufferedImage mail;
 	private SimulatorGUI gui;
+	private java.util.ArrayList<String> usersStrings = new ArrayList<String>();
 	private java.util.ArrayList<Coord> usersCoord = new ArrayList<Coord>();
 	private java.util.ArrayList<Coord> messagesCoord = new ArrayList<Coord>();
 	private java.util.ArrayList<Message> messagesInfo = new ArrayList<Message>();
@@ -57,6 +60,22 @@ public class NetworkView extends JPanel
 		this.addMouseListener(new NetworkMouseListener(gui, this, usersCoord, userSize, messageSize));
 	} 
 
+	public void setUsersStrings()
+	{
+		String str = null;
+		for(int i = 0; i < usersCount; i++)
+		{
+			BitcoinNode node = (BitcoinNode)(gui.getSimulator().getNetwork().getUser(i));
+			str = "NODE " + i + "; PUBLIC KEY ";
+			String pk = node.getPublicKey().toString();
+			for(int j = 723; j < 731; j++)
+			{
+				str += pk.charAt(j);
+			}
+			usersStrings.add(str);
+		}
+	}
+
 	public void setUsersCoords()
 	{
 		for(int i = 0; i < usersCount; i++)
@@ -78,12 +97,13 @@ public class NetworkView extends JPanel
 	public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
-
+		setUsersStrings();
         //paint users and connections
         for(int i = 0; i < usersCount; i++)
 	    {
-	    	//paint background
 			g2.setColor(usersColors.get(i));
+	    	g2.drawString(usersStrings.get(i), usersCoord.get(i).getX() - userSize, usersCoord.get(i).getY()-userSize/2);
+	    	//paint background
 			g2.fillRect(usersCoord.get(i).getX() - userSize/2, usersCoord.get(i).getY()-userSize/2, userSize, userSize);
         	//paint user
 			g2.drawImage(desktop,usersCoord.get(i).getX() - userSize/2, usersCoord.get(i).getY()-userSize/2, userSize, userSize, null);

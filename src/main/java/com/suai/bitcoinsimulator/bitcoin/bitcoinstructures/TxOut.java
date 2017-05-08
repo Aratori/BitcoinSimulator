@@ -11,15 +11,17 @@ import static com.suai.bitcoinsimulator.simulator.utils.Crypt.verifySig;
  * Transaction input
  */
 public class TxOut {
+    public Contract contract;
     //number of satoshis
     private int satoshisCount;
     //conditions to spent this output
     private PublicKey publicKey;
 
-    public TxOut(int satoshisCount, PublicKey pKey)
+    public TxOut(int satoshisCount, PublicKey pKey, Contract contract)
     {
         this.satoshisCount = satoshisCount;
         this.publicKey = pKey;
+        this.contract = contract;
     }
 
     //test cond
@@ -40,13 +42,24 @@ public class TxOut {
         return satoshisCount;
     }
 
+    public PublicKey getPublicKey()
+    {
+        return publicKey;
+    }
+
     @Override
     public String toString()
     {
-        String str = "TxOut:\n";
-        str += "SatoshisCount: " + satoshisCount + "\n";
-        str += "Output condition type " + 1;
-
+        String str = "TxOut:: ";
+        str += "Satoshi's Count: " + String.format("%03d",satoshisCount);
+        str += "; ";
+        str += "Contract Type: " + contract.toString();
+        //publicKey
+        str += "; ";
+        str += "Public Key: ";
+        String pk = publicKey.toString();
+        for(int i = 723; i < 731; i++)
+            str += pk.charAt(i);
         return str;
     }
 }

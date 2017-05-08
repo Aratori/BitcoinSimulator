@@ -17,6 +17,7 @@ public class SimulatorGUI extends JFrame implements ViewManager {
     private NetworkView network;
     private JSplitPane split = new JSplitPane();
     private JSplitPane debugSplit = new JSplitPane();
+    private JSplitPane debugBlockChainSplit = new JSplitPane();
     private JMenuBar menu = new JMenuBar();
     private Vector<UserView> users = new Vector();
     private int usersCount;
@@ -24,6 +25,9 @@ public class SimulatorGUI extends JFrame implements ViewManager {
     private JList log = new JList(logModel);                            //	list of log's messages that will show on left side
     JTextArea debugInfo = new JTextArea ("DebugInfo");
     JScrollPane scrollableDebugInfo = new JScrollPane (debugInfo,
+            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+    JTextArea debugBlockChainInfo = new JTextArea ("DebugBlockChainInfo");
+    JScrollPane scrollableBlockChainDebugInfo = new JScrollPane (debugBlockChainInfo,
             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
     private PauseButton pauseButton;
@@ -52,6 +56,7 @@ public class SimulatorGUI extends JFrame implements ViewManager {
         split.setOneTouchExpandable(true);
         split.setDividerLocation(300);
 
+
         //add debug split
         debugSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
         debugSplit.setOneTouchExpandable(true);
@@ -59,7 +64,14 @@ public class SimulatorGUI extends JFrame implements ViewManager {
         debugSplit.setTopComponent(network);
         debugSplit.setBottomComponent(scrollableDebugInfo);
 
-        split.setRightComponent(debugSplit);
+        //add debug chain split
+        debugBlockChainSplit.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+        debugBlockChainSplit.setOneTouchExpandable(true);
+        debugBlockChainSplit.setDividerLocation(700);
+        debugBlockChainSplit.setLeftComponent(debugSplit);
+        debugBlockChainSplit.setRightComponent(scrollableBlockChainDebugInfo);
+
+        split.setRightComponent(debugBlockChainSplit);
         split.setLeftComponent(logScrollPane);
         logModel.addElement("Log started:");
 
@@ -97,7 +109,7 @@ public class SimulatorGUI extends JFrame implements ViewManager {
 
         network.setBounds(400, 400, 300, 300);
 
-        setBounds(0, 0, 1000, 1000);
+        setBounds(0, 0, 1300, 1000);
         setVisible(true);
     }
 
@@ -113,7 +125,7 @@ public class SimulatorGUI extends JFrame implements ViewManager {
 
     public void setUserDebugInfo(int userId)
     {
-        debugInfo.setText((String)bs.getNetwork().getUser(userId).toString());
+        debugBlockChainInfo.setText((String)bs.getNetwork().getUser(userId).toString());
     }
 
     public void setMessageDebugInfo(Message message)

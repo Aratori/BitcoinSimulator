@@ -7,19 +7,19 @@ import java.security.Signature;
  */
 public class TxIn {
     //outpoint
-    private int prevTxHash;     //in test mode it number of transaction
+    private byte[] prevTxHash;     //in test mode it number of transaction
     private int outputIndex;    //index of output in prev transaction
     //signature script
     private byte[] signature;       //подписанный секретным ключом хэш транзакции
 
-    public TxIn(int prevTxHash, int outputIndex, byte[] signature)
+    public TxIn(byte[] prevTxHash, int outputIndex, byte[] signature)
     {
         this.prevTxHash = prevTxHash;
         this.outputIndex = outputIndex;
         this.signature = signature;
     }
 
-    public int getPrevTxHash()
+    public byte[] getPrevTxHash()
     {
         return prevTxHash;
     }
@@ -37,14 +37,16 @@ public class TxIn {
     @Override
     public String toString()
     {
-        String str = "TxIn:\n";
-        str += "Previous transaction hash:\n";
-        str += Integer.toString(prevTxHash) + "\n";
-        str += "Output index:\n";
-        str += outputIndex + "\n";
-        str += "Signature:\n";
-        str += String.valueOf(signature) + "\n";
-
+        String str = "TxIn:: ";
+        str += "Previous Transaction Hash: ";
+        for(int i = 0; i < 8 && i < prevTxHash.length; i++)
+            str += String.format("%x", prevTxHash[i]);
+        str += "; ";
+        str += "Output Index: " + String.format("%+3d", outputIndex);
+        str += "; ";
+        str += "Signature: ";
+        for(int i = 0; i < 8 && i < signature.length; i++)
+            str += String.format("%x", signature[i]);
         return str;
     }
 }

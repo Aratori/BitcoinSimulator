@@ -3,6 +3,9 @@ package com.suai.bitcoinsimulator;
 import com.suai.bitcoinsimulator.simulator.Simulator;
 import com.suai.bitcoinsimulator.bitcoin.BitcoinNode;
 import com.suai.bitcoinsimulator.simulator.nodes.User;
+import com.suai.bitcoinsimulator.simulator.utils.Crypt;
+
+import java.security.PublicKey;
 
 /**
  * Created by anton on 26.04.17.

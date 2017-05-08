@@ -1,11 +1,35 @@
 package com.suai.bitcoinsimulator.simulator.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.security.*;
 
 /**
  * Created by anton on 04.05.17.
  */
 public class Crypt {
+
+
+    public static byte[] getHash(String data)
+    {
+        byte[] hashDigest = null;
+        try {
+            //выбираем хэш-функцию
+            MessageDigest hash = MessageDigest.getInstance("SHA-256");
+            //считаем хэш
+            hash.update(data.getBytes("UTF-8"));
+            //MessageDigest
+            hashDigest = hash.digest();
+        }catch(NoSuchAlgorithmException ex)
+            {
+                ;
+            }
+            catch(UnsupportedEncodingException ex)
+            {
+                ;
+            }
+
+        return hashDigest;
+    }
     /**
      * Sign data
      * @param data
