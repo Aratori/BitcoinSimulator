@@ -15,13 +15,31 @@ public class TxOut {
     //number of satoshis
     private int satoshisCount;
     //conditions to spent this output
-    private PublicKey publicKey;
+    private PublicKey[] publicKeys;
+    //1 - sender
+    //2 - receiver
+    //3 - arbiter
 
     public TxOut(int satoshisCount, PublicKey pKey, Contract contract)
     {
         this.satoshisCount = satoshisCount;
-        this.publicKey = pKey;
+        this.publicKeys[0] = pKey;
         this.contract = contract;
+    }
+
+    public TxOut(int satoshisCount, PublicKey[] publicKeys, Contract contract)
+    {
+        this.satoshisCount = satoshisCount;
+        this.publicKeys = publicKeys;
+        this.contract = contract;
+    }
+
+    public boolean txMultisigOutputVerification(byte[][] data, byte[][] signature)
+    {
+        for(int i = 0; i < data.length; i++)
+            if(!txOutputVerification(data[i], signature[i]))
+                return false;
+        return true;
     }
 
     //test cond
@@ -29,13 +47,15 @@ public class TxOut {
     {
         boolean tog = false;
         try {
-            tog = Crypt.verifySig(data, publicKey, signature);
+            tog = Crypt.verifySig(data, publicKeys[0], signature);
         }catch(Exception ex)
         {
             System.err.println("Public key exception in TxOut");
         }
         return tog;
     }
+
+    //arbitr cond
 
     public int getSatoshisCount()
     {
@@ -44,7 +64,7 @@ public class TxOut {
 
     public PublicKey getPublicKey()
     {
-        return publicKey;
+        return publicKeys[0];
     }
 
     @Override
@@ -57,7 +77,7 @@ public class TxOut {
         //publicKey
         str += "; ";
         str += "Public Key: ";
-        String pk = publicKey.toString();
+        String pk = publicKeys[0].toString();
         for(int i = 723; i < 731; i++)
             str += pk.charAt(i);
         return str;

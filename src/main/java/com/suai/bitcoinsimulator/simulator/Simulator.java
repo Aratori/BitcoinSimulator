@@ -1,16 +1,24 @@
 package com.suai.bitcoinsimulator.simulator;
 
+import com.suai.bitcoinsimulator.bitcoin.BitcoinNode;
 import com.suai.bitcoinsimulator.simulator.nodes.Network;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.concurrent.PriorityBlockingQueue;
 import com.suai.bitcoinsimulator.simulator.utils.LogKeeper;
 import com.suai.bitcoinsimulator.simulator.utils.StepUpdater;
 import com.suai.bitcoinsimulator.view.SimulatorGUI;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Simulator {
+    private static Simulator currentSimulator;
     private int endTime;
     private int currentTime;
     private Network network;
@@ -28,7 +36,7 @@ public class Simulator {
      * @param step  -   update period
      * @param mode  -   GUI/TEXT modes
      */
-    public Simulator(int endTime, int usersCount, int step, boolean mode) {
+    private Simulator(int endTime, int usersCount, int step, boolean mode) {
         this.endTime = endTime;
         this.currentTime = 0;
         this.events = new PriorityBlockingQueue<Event>();
@@ -41,6 +49,83 @@ public class Simulator {
         else
             gui = null;
         LogKeeper.createLogger(gui);
+        currentSimulator = this;
+    }
+
+    public void clean()
+    {
+        network = null;
+        gui = null;
+        gui.clean();
+        hrono.cancel();
+        updater.cancel();
+        events.clear();
+    }
+    public static void restartSimulator(String filename)
+    {
+        //смотрим конец файла
+        //построчно считываем ноды
+        File file = new File(filename);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (!file.exists()){
+            System.out.println("Config file not exist");
+        }
+
+        try{
+            BufferedReader in = new BufferedReader(new FileReader( file.getAbsoluteFile()));
+            String s;
+            int start = -1;
+            int i = 0;
+            Pattern pat=Pattern.compile("[0-9]*");    //ищем числа
+            Matcher matcher;
+            //конфигурация симулятора
+            int[] simulatorValues = new int[3];
+            Boolean simulatorTog = true;
+            if((s = in.readLine()) != null)
+            {
+                matcher=pat.matcher(s);
+                //парсим конфигурацию симулятора
+                while(matcher.find(start + 1))
+                {
+                    String value = s.substring(matcher.start(), matcher.end());
+                    simulatorValues[i] = Integer.parseInt(value);
+                    start = matcher.end();
+                    if(i == 2)
+                        break;
+                    i++;
+                }
+            }
+            //создаем новый симулятор
+            //currentSimulator.clean();
+            currentSimulator = new Simulator(simulatorValues[0], simulatorValues[1], simulatorValues[2], simulatorTog);
+            System.gc();
+            //конфигурация нодов
+            int[] nodeValues = new int[2];
+            while((s = in.readLine()) != null)
+            {
+                start = -1;
+                i = 0;
+                matcher=pat.matcher(s);
+                //парсим конфигурацию симулятора
+                while(matcher.find(start + 1))
+                {
+                    String value = s.substring(matcher.start(), matcher.end());
+                    nodeValues[i] = Integer.parseInt(value);
+                    start = matcher.end();
+                    if(i == 1)
+                        break;
+                    i++;
+                }
+                //регистрируем новую ноду
+                new BitcoinNode(nodeValues[0], nodeValues[1], currentSimulator);
+            }
+            currentSimulator.startSimulation();
+        } catch(IOException e) {
+            System.err.println("File read error");
+        }
+
+
     }
 
     public void addEvent(Event event) {

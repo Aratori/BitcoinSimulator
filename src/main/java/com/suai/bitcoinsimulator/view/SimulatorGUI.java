@@ -10,10 +10,11 @@ import java.util.*;
 
 import com.suai.bitcoinsimulator.simulator.Simulator;
 import com.suai.bitcoinsimulator.simulator.Message;
+import com.suai.bitcoinsimulator.view.listeners.RestartListener;
 import com.suai.bitcoinsimulator.view.listeners.SpeedListener;
 
 public class SimulatorGUI extends JFrame implements ViewManager {
-    private final Simulator bs;
+    private Simulator bs;
     private NetworkView network;
     private JSplitPane split = new JSplitPane();
     private JSplitPane debugSplit = new JSplitPane();
@@ -80,6 +81,9 @@ public class SimulatorGUI extends JFrame implements ViewManager {
 
         //toolbar
         {
+            JMenu service = new JMenu("Service");
+            JMenuItem restart = new JMenuItem("Restart");
+            restart.addActionListener(new RestartListener());
             JMenuItem exit = new JMenuItem("Exit");
             exit.addActionListener(new ActionListener() {
                 @Override
@@ -87,6 +91,8 @@ public class SimulatorGUI extends JFrame implements ViewManager {
                     System.exit(0);
                 }
             });
+            service.add(restart);
+            service.add(exit);
             JMenu speed = new JMenu("Speed");
             JMenuItem speed1 = new JMenuItem("Speed 1");
             JMenuItem speed2 = new JMenuItem("Speed 2");
@@ -102,7 +108,7 @@ public class SimulatorGUI extends JFrame implements ViewManager {
             pauseButton.setSize(20, 20);
 
             menu.add(speed);
-            menu.add(exit);
+            menu.add(service);
             menu.add(pauseButton);
         }
         contentPane.add(menu, BorderLayout.NORTH);
@@ -141,5 +147,24 @@ public class SimulatorGUI extends JFrame implements ViewManager {
     public synchronized void addLogMessage(String message)
     {
         logModel.addElement(message);
+    }
+
+    public void clean()
+    {
+        bs = null;
+        network = null;
+        split = null;
+        debugSplit = null;
+        debugBlockChainSplit = null;
+        menu = null;
+        users.clear();
+        logModel = null;
+        log = null;
+        debugInfo = null;
+        scrollableDebugInfo = null;
+        debugBlockChainInfo = null;
+        scrollableBlockChainDebugInfo = null;
+
+        pauseButton = null;
     }
 }
