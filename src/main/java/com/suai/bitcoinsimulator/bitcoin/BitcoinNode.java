@@ -23,10 +23,10 @@ import java.util.Map;
 
 /**
  * TransactionCreate()
- checkBlock()
- mineBlock()
- sendBlock()
- sendPubKey()
+ * checkBlock()
+ * mineBlock()
+ * sendBlock()
+ * sendPubKey()
  */
 public class BitcoinNode extends User {
     private BlockChain blockChain;
@@ -39,79 +39,78 @@ public class BitcoinNode extends User {
 
     /**
      * BitcoinNode states
-     *  - mine block;
-     *  - check block;
+     * - mine block;
+     * - check block;
      */
     private int currentState;
 
-    public BitcoinNode(int startTime, int interval, Simulator bs) {
+    public BitcoinNode(int startTime, int interval, Simulator bs, boolean stat) {
 
         super(startTime, interval, bs);
-            //test priv and pub keys
-        try{
+        //test priv and pub keys
+        try {
             blockChain = new BlockChain(this);
             keyPair = Crypt.generateKeyPair(getId());
             //на старте сразу майним блок, чтобы получить биткоины
-            mineStartBlock();
-            //записываем событие на передачу публичного ключа другим нодам
-            simulator.addEvent(new SendPubKeyEvent(simulator.getCurrentTime() + 4, this));
-        }catch(Exception ex)
-        {
+            if(!stat) {
+                mineStartBlock();
+                //записываем событие на передачу публичного ключа другим нодам
+                simulator.addEvent(new SendPubKeyEvent(simulator.getCurrentTime() + 4, this));
+            }
+        } catch (Exception ex) {
             LogKeeper.info("Can't generate key pair for node " + getId(), simulator.getCurrentTime());
         }
     }
 
     @Override
-    public synchronized void onEvent(Event event)
-    {
+    public synchronized void onEvent(Event event) {
 
         //if need to send pubkey to other nodes
-        if(event instanceof SendPubKeyEvent)
-        {
+        if (event instanceof SendPubKeyEvent) {
             LogKeeper.info("User " + getId() + " send pubkey to other nodes", simulator.getCurrentTime());
             PubKeyMessage message = new PubKeyMessage("Pubkey of  user " + getId(), keyPair.getPublic());
             simulator.getNetwork().sendMessageToAll(getId(), message);
         }
 
         //if block checked
-        if(event instanceof BlockCheckedEvent)
-        {
+        if (event instanceof BlockCheckedEvent) {
 
         }
 
         //пробуем намайнить блок с транзакцией, для другого пользователя
         ArrayList<Transaction> myTransactions = blockChain.getMyTransactions();
-        if(myTransactions.size() != 0 && pubKeys.size() != 0 && currentMinedBlock == null)
-        {
+        if (myTransactions.size() != 0 && pubKeys.size() != 0 && currentMinedBlock == null) {
             //получатель
             int receiver = simulator.getNetwork().getRandomUser(getId());
+            //публичный ключ предназначенный для выхода
             PublicKey receiverPubKey = pubKeys.get(receiver);
             //транзакция-источник
-            Transaction tx = myTransactions.get(0);
+            Transaction txSource = myTransactions.get(0);
+            byte[] txSourceId = txSource.getTxId();
 
             //вход
-            //в данном случае вход без подписи
+            //на входе закладываем подпись
             byte[] signature = null;
             try {
-                signature = Crypt.signData(keyPair.getPublic().toString().getBytes(), keyPair.getPrivate());
-            }catch(Exception ex)
-            {
+                signature = Crypt.signData(txSourceId, keyPair.getPrivate());
+            } catch (Exception ex) {
                 System.err.println("Signature creation failed");
             }
+            //индекс выхода
+            int outputIndex = txSource.checkCondition(txSourceId, signature);
             TxIn input = new TxIn(
-                    tx.getTxId(),       //TxId транзакции-источника
-                    tx.checkCondition(keyPair.getPublic().toString().getBytes(), signature), //индекс выхода на транзакции-источнике
-                    signature);              //подпись(сейчас не действительна)
+                    txSourceId,       //TxId транзакции-источника
+                    outputIndex, //индекс выхода на транзакции-источнике
+                    signature);              //подпись
             //выход
-            TxOut output = new TxOut(tx.getOutput(
-                                        tx.checkCondition(keyPair.getPublic().toString().getBytes(), signature)).getSatoshisCount(), //количество биткоинов на выходе
-                                        keyPair.getPublic(), Contract.SIMPLE);                                        //условие выхода(сейчас не работает)
+            TxOut output = new TxOut(
+                    txSource.getOutput(outputIndex).getSatoshisCount(), //количество биткоинов на выходе
+                    new PublicKey[]{receiverPubKey}, Contract.SIMPLE);                                        //условие выхода(сейчас не работает)
             mineBlock(input, output);
         }
 
         //if block mined
-        if(event instanceof BlockMinedEvent)
-        {
+        if (event instanceof BlockMinedEvent) {
             LogKeeper.info("Mined new block by user " + getId(), simulator.getCurrentTime());
             //добавляем новый блок в блокчейн
             blockChain.checkBlock(currentMinedBlock);
@@ -122,62 +121,57 @@ public class BitcoinNode extends User {
         }
 
         //добавляем событие на следующее пробуждение
-        simulator.addEvent(new Event(simulator.getCurrentTime() + interval , this));
+        simulator.addEvent(new Event(simulator.getCurrentTime() + interval, this));
     }
 
     @Override
-    public void receiveMessage(int senderId, Message message)
-    {
+    public void receiveMessage(int senderId, Message message) {
         //если пришел публичный ключ
-        if(message.getType() == 1)
-        {
+        if (message.getType() == 1) {
             LogKeeper.info("Node " + getId() + " receive public key from node " + senderId,
-                            simulator.getCurrentTime());
-            pubKeys.put(senderId, ((PubKeyMessage)message).getPubKey());
+                    simulator.getCurrentTime());
+            pubKeys.put(senderId, ((PubKeyMessage) message).getPubKey());
         }
 
         //если пришел блок для проверки
-        if(message.getType() == 2)
-        {
+        if (message.getType() == 2) {
             LogKeeper.info("Node " + getId() + " receive block from node " + senderId,
-                            simulator.getCurrentTime());
-            blockChain.checkBlock(((CheckBlockMessage)message).getBlock());
+                    simulator.getCurrentTime());
+            blockChain.checkBlock(((CheckBlockMessage) message).getBlock());
         }
     }
 
     /**
      * Create coinbase block only with coinbase transaction.
-     * @return
-     */
-    public void mineStartBlock()
-    {
-        try {
-            currentMinedBlock = new Block(null, simulator.getCurrentTime());
-            //создаем транзакцию с выплатой создателю блока
-            Transaction coinbaseTx = new Transaction();
-            coinbaseTx.addOutput(new TxOut(coinbaseReward, keyPair.getPublic(), Contract.SIMPLE));
-            currentMinedBlock.addTransaction(coinbaseTx);
-            //добавлем событие, на момент, когда блок смайнится
-            simulator.addEvent(new BlockMinedEvent(simulator.getCurrentTime() + mineDelay + interval, this));
-        }catch (Exception ex)
-        {
-            LogKeeper.info("Mine start block exception", simulator.getCurrentTime());
-        }
-        }
-
-    /**
-     * Mine block with coinbase and other transactions
-     * @param input - transaction's input
-     * @param output - transaction' output
      *
      * @return
      */
-    public Block mineBlock(TxIn input, TxOut output)
-    {
+    public void mineStartBlock() {
+        try {
+            currentMinedBlock = new Block(Integer.toString(getId()).getBytes(), simulator.getCurrentTime());
+            //создаем транзакцию с выплатой создателю блока
+            Transaction coinbaseTx = new Transaction();
+            coinbaseTx.addOutput(new TxOut(coinbaseReward, new PublicKey[]{keyPair.getPublic()}, Contract.SIMPLE));
+            currentMinedBlock.addTransaction(coinbaseTx);
+            //добавлем событие, на момент, когда блок смайнится
+            simulator.addEvent(new BlockMinedEvent(simulator.getCurrentTime() + mineDelay + interval, this));
+        } catch (Exception ex) {
+            LogKeeper.info("Mine start block exception", simulator.getCurrentTime());
+        }
+    }
+
+    /**
+     * Mine block with coinbase and other transactions
+     *
+     * @param input  - transaction's input
+     * @param output - transaction' output
+     * @return
+     */
+    public Block mineBlock(TxIn input, TxOut output) {
         currentMinedBlock = new Block(blockChain.getLastBlock().getBlockHeaderHash(), simulator.getCurrentTime());
         //set coinbase transaction
         Transaction coinbaseTx = new Transaction();
-        coinbaseTx.addOutput(new TxOut(coinbaseReward, keyPair.getPublic(), Contract.SIMPLE));
+        coinbaseTx.addOutput(new TxOut(coinbaseReward, new PublicKey[]{keyPair.getPublic()}, Contract.SIMPLE));
         currentMinedBlock.addTransaction(coinbaseTx);
         //set base transaction
         Transaction tx = new Transaction();
@@ -190,20 +184,17 @@ public class BitcoinNode extends User {
         return new Block(blockChain.getLastBlock().getBlockHeaderHash(), simulator.getCurrentTime());
     }
 
-    public PublicKey getPublicKey()
-    {
-        return  keyPair.getPublic();
+    public PublicKey getPublicKey() {
+        return keyPair.getPublic();
     }
 
-    public PrivateKey getPrivateKey()
-    {
+    public PrivateKey getPrivateKey() {
         return keyPair.getPrivate();
     }
 
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         String str = "Bitcoin Node " + Integer.toString(getId()) + "\n";
         str += blockChain.toString();
         return str;

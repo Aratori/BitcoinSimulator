@@ -56,7 +56,7 @@ public class Network extends Node {
     }
     /*
     *   Передает id пользователя, которому можно отправить сообщение
-    **/ 
+    **/
     public int getRandomUser(int currentUser)
     {
         Random rand = new Random();
@@ -77,6 +77,13 @@ public class Network extends Node {
         users.get(receiversId.removeFirst()).receiveMessage(sendersId.removeFirst(), messages.removeFirst());
     }
 
+    public void  restart()
+    {
+        users.clear();
+        sendersId.clear();
+        messages.clear();
+        receiversId.clear();
+    }
     public int getDelay()
     {
         return delay;

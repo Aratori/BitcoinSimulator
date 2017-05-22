@@ -20,13 +20,6 @@ public class TxOut {
     //2 - receiver
     //3 - arbiter
 
-    public TxOut(int satoshisCount, PublicKey pKey, Contract contract)
-    {
-        this.satoshisCount = satoshisCount;
-        this.publicKeys[0] = pKey;
-        this.contract = contract;
-    }
-
     public TxOut(int satoshisCount, PublicKey[] publicKeys, Contract contract)
     {
         this.satoshisCount = satoshisCount;

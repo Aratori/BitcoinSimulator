@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.PriorityBlockingQueue;
+
+import com.suai.bitcoinsimulator.simulator.nodes.User;
 import com.suai.bitcoinsimulator.simulator.utils.LogKeeper;
 import com.suai.bitcoinsimulator.simulator.utils.StepUpdater;
 import com.suai.bitcoinsimulator.view.SimulatorGUI;
@@ -36,7 +38,7 @@ public class Simulator {
      * @param step  -   update period
      * @param mode  -   GUI/TEXT modes
      */
-    private Simulator(int endTime, int usersCount, int step, boolean mode) {
+    public Simulator(int endTime, int usersCount, int step, boolean mode) {
         this.endTime = endTime;
         this.currentTime = 0;
         this.events = new PriorityBlockingQueue<Event>();
@@ -52,15 +54,6 @@ public class Simulator {
         currentSimulator = this;
     }
 
-    public void clean()
-    {
-        network = null;
-        gui = null;
-        gui.clean();
-        hrono.cancel();
-        updater.cancel();
-        events.clear();
-    }
     public static void restartSimulator(String filename)
     {
         //смотрим конец файла
@@ -98,8 +91,17 @@ public class Simulator {
             }
             //создаем новый симулятор
             //currentSimulator.clean();
-            currentSimulator = new Simulator(simulatorValues[0], simulatorValues[1], simulatorValues[2], simulatorTog);
-            System.gc();
+            //currentSimulator = new Simulator(simulatorValues[0], simulatorValues[1], simulatorValues[2], simulatorTog);
+            //обнулить симулятор
+            currentSimulator.pause();
+            currentSimulator.endTime = simulatorValues[0];
+            currentSimulator.currentTime = 0;
+            currentSimulator.step = simulatorValues[2];
+            currentSimulator.network.restart();
+            currentSimulator.events.clear();
+            User.restart();
+            //обнулить gui
+            currentSimulator.gui.restart(simulatorValues[1]);
             //конфигурация нодов
             int[] nodeValues = new int[2];
             while((s = in.readLine()) != null)
@@ -118,7 +120,7 @@ public class Simulator {
                     i++;
                 }
                 //регистрируем новую ноду
-                new BitcoinNode(nodeValues[0], nodeValues[1], currentSimulator);
+                new BitcoinNode(nodeValues[0], nodeValues[1], currentSimulator, false);
             }
             currentSimulator.startSimulation();
         } catch(IOException e) {

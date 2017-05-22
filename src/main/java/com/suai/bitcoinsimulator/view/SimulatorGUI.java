@@ -20,8 +20,6 @@ public class SimulatorGUI extends JFrame implements ViewManager {
     private JSplitPane debugSplit = new JSplitPane();
     private JSplitPane debugBlockChainSplit = new JSplitPane();
     private JMenuBar menu = new JMenuBar();
-    private Vector<UserView> users = new Vector();
-    private int usersCount;
     private DefaultListModel logModel = new DefaultListModel();
     private JList log = new JList(logModel);                            //	list of log's messages that will show on left side
     JTextArea debugInfo = new JTextArea ("DebugInfo");
@@ -43,7 +41,6 @@ public class SimulatorGUI extends JFrame implements ViewManager {
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
         setLocationRelativeTo(null);
-        this.usersCount = usersCount;
         network = new NetworkView(this, usersCount);
 
 
@@ -149,22 +146,13 @@ public class SimulatorGUI extends JFrame implements ViewManager {
         logModel.addElement(message);
     }
 
-    public void clean()
+    public void restart(int usersCount)
     {
-        bs = null;
-        network = null;
-        split = null;
-        debugSplit = null;
-        debugBlockChainSplit = null;
-        menu = null;
-        users.clear();
-        logModel = null;
-        log = null;
-        debugInfo = null;
-        scrollableDebugInfo = null;
-        debugBlockChainInfo = null;
-        scrollableBlockChainDebugInfo = null;
-
-        pauseButton = null;
+        //чистим логи
+        debugInfo.removeAll();
+        debugBlockChainInfo.removeAll();
+        logModel.removeAllElements();
+        //чистим и меняем представление сети
+        this.network.restart(usersCount);
     }
 }

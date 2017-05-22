@@ -58,9 +58,15 @@ public class User extends Node {
         return userId;
     }
 
+    public static void restart()
+    {
+        userCounter = 0;
+    }
+
     @Override
     public String toString()
     {
         return (String)("Network user " + getId());
     }
+
 }    

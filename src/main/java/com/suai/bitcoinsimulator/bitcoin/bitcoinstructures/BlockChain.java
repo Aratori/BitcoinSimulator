@@ -61,6 +61,7 @@ public class BlockChain {
             for(int j = 0; j < tx.getInputsSize(); j++)
             {
                 TxIn input = tx.getInput(j);
+                byte[] inputPrevHash = input.getPrevTxHash();
                 boolean tog = false;    //выход не найден
                 //ищем выходы с таким же хэшем
                 for(int m = 0; m < blockchain.size(); m++)
@@ -70,7 +71,12 @@ public class BlockChain {
                     {
                         Transaction BCBlockTransaction = BCBlock.getTransaction(k);
                         //если та самая транзакция, из которой берутся биткоины
-                        if(BCBlockTransaction.getTxId().equals(input.getPrevTxHash())) {
+                        byte[] BCBlockTxId = BCBlockTransaction.getTxId();
+                        boolean eqId = true;
+                        for(int r = 0; r < BCBlockTxId.length; r++)
+                            if(BCBlockTxId[r] != inputPrevHash[r])
+                                eqId = false;
+                        if(eqId) {
                             //если такой индекс существует
                             if(BCBlockTransaction.getOutputsSize() > input.getOutputIndex())
                             {

@@ -31,6 +31,10 @@ public class NetworkMouseListener implements MouseListener {
         this.messageSize = messageSize;
     }
 
+    public void restart(ArrayList<Coord> centers){
+        this.centers = centers;
+    }
+
     public void mousePressed(MouseEvent e) {
     }
 
