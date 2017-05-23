@@ -192,11 +192,45 @@ public class BitcoinNode extends User {
         return keyPair.getPrivate();
     }
 
+    public static int getIdCounter()
+    {
+        return BitcoinNode.userCounter;
+    }
+
 
     @Override
     public String toString() {
         String str = "Bitcoin Node " + Integer.toString(getId()) + "\n";
         str += blockChain.toString();
         return str;
+    }
+    //////////////////////////////////////////////////////
+    //STATIC API FOR TESTS
+    //////////////////////////////////////////////////////
+    public static Block mineStartBlock(int id,int time, PublicKey pk)
+    {
+        Block startBlock = null;
+        try {
+            startBlock = new Block(Integer.toString(id).getBytes(), time);
+            //создаем транзакцию с выплатой создателю блока
+            Transaction coinbaseTx = new Transaction();
+            coinbaseTx.addOutput(new TxOut(coinbaseReward, new PublicKey[]{pk}, Contract.SIMPLE));
+            startBlock.addTransaction(coinbaseTx);
+        } catch (Exception ex) {;}
+        return startBlock;
+    }
+    public static Block mineBlock(TxIn input, TxOut output, Block prevBlock, int time, PublicKey pk) {
+        Block newBlock = new Block(prevBlock.getBlockHeaderHash(), time);
+        //set coinbase transaction
+        Transaction coinbaseTx = new Transaction();
+        coinbaseTx.addOutput(new TxOut(coinbaseReward, new PublicKey[]{pk}, Contract.SIMPLE));
+        newBlock.addTransaction(coinbaseTx);
+        //set base transaction
+        Transaction tx = new Transaction();
+        tx.addInput(input);
+        tx.addOutput(output);
+        newBlock.addTransaction(tx);
+
+        return newBlock;
     }
 }

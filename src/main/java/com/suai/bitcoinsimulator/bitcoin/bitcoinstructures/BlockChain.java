@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 public class BlockChain {
     private BitcoinNode node;
+    private boolean staticMode;   //static/nonstatic
     private ArrayList<Block> blockchain = new ArrayList<Block>();
     /**
      * Хранит список транзакций, из которых можно совершить вывод.
@@ -19,6 +20,11 @@ public class BlockChain {
     public BlockChain(BitcoinNode node)
     {
         this.node = node;
+        this.staticMode = false;
+    }
+    public BlockChain()
+    {
+        this.staticMode = true;
     }
 
     private boolean addBlock(Block block)
@@ -85,7 +91,9 @@ public class BlockChain {
                                 if(output.txOutputVerification(input.getPrevTxHash(), input.getSignature())) {
                                     tog = true;
                                     //обновляем myTransactions, если это был выход нашей транзакции
-                                    if(output.getPublicKey().equals(node.getPublicKey()))
+                                    if(staticMode)
+                                        break;
+                                    else if(output.getPublicKey().equals(node.getPublicKey()))
                                         deleteMyTransaction(BCBlockTransaction);
                                     break;
                                 }
@@ -99,7 +107,8 @@ public class BlockChain {
             }
         }
         //update my transactions
-        findMyTransaction(block);
+        if(!staticMode)
+            findMyTransaction(block);
 
         //add block
         addBlock(block);

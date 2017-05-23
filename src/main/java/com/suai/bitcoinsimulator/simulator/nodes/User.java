@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * Создает событие при инициализации и через некоторые интервалы времени.
  */
 public class User extends Node {
-    private static int userCounter = 0;             //counter, that give id to users
+    protected static int userCounter = 0;             //counter, that give id to users
     protected int userId;                             //id
     protected int interval;
     protected Simulator simulator;
