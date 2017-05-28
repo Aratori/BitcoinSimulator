@@ -11,7 +11,7 @@ import static com.suai.bitcoinsimulator.simulator.utils.Crypt.verifySig;
  * Transaction input
  */
 public class TxOut {
-    public Contract contract;
+    private Contract contract;
     //number of satoshis
     private int satoshisCount;
     //conditions to spent this output
@@ -27,11 +27,28 @@ public class TxOut {
         this.contract = contract;
     }
 
-    public boolean txMultisigOutputVerification(byte[][] data, byte[][] signature)
+    public boolean txMultisigOutputVerification(byte[] data, byte[][] signatures)
     {
-        for(int i = 0; i < data.length; i++)
-            if(!txOutputVerification(data[i], signature[i]))
+        //проверяем каждую сигнатуру
+        for(int i = 0; i < signatures.length; i++)
+        {
+            boolean verified = false;
+            //идем по ключам, если хоть один дает верный результат, то идем дальше
+            //иначе ошибка
+            for(int j = 0; j < publicKeys.length; j++)
+            {
+                try {
+                    if(Crypt.verifySig(data, publicKeys[j], signatures[i]))
+                        verified = true;
+                }catch(Exception ex)
+                {
+                    System.err.println("Public key exception in TxOut");
+                }
+            }
+            if(!verified)
                 return false;
+        }
+
         return true;
     }
 
@@ -46,6 +63,19 @@ public class TxOut {
             System.err.println("Public key exception in TxOut");
         }
         return tog;
+    }
+
+    /**
+     * Определенный публичный ключ по индексу
+     */
+    public PublicKey getCertainPublicKey(int index)
+    {
+        return publicKeys[index];
+    }
+
+    public Contract getContract()
+    {
+        return contract;
     }
 
     //arbitr cond
@@ -69,10 +99,13 @@ public class TxOut {
         str += "Contract Type: " + contract.toString();
         //publicKey
         str += "; ";
-        str += "Public Key: ";
-        String pk = publicKeys[0].toString();
-        for(int i = 723; i < 731; i++)
-            str += pk.charAt(i);
+        str += "Public Keys: ";
+        for(int i = 0; i < publicKeys.length; i++) {
+            String pk = publicKeys[i].toString();
+            for (int j = 723; j < 731; j++)
+                str += pk.charAt(j);
+            str += "; ";
+        }
         return str;
     }
 }

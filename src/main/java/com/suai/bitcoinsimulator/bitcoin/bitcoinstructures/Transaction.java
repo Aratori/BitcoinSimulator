@@ -36,6 +36,15 @@ public class Transaction {
         return -1;
     }
 
+    public int checkMultisigCondition(byte[] data, byte[][] signatures)
+    {
+        for(int i = 0; i < outputs.size(); i++)
+            if(outputs.get(i).txMultisigOutputVerification(data, signatures))
+                return i;
+
+        return -1;
+    }
+
     public void addInput(TxIn input)
     {
         inputs.add(input);

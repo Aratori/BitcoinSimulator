@@ -3,7 +3,9 @@ package com.suai.bitcoinsimulator.bitcoin.bitcoinstructures;
 import com.suai.bitcoinsimulator.bitcoin.BitcoinNode;
 import com.suai.bitcoinsimulator.simulator.utils.Crypt;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Save information about blockchain
@@ -12,6 +14,8 @@ public class BlockChain {
     private BitcoinNode node;
     private boolean staticMode;   //static/nonstatic
     private ArrayList<Block> blockchain = new ArrayList<Block>();
+    //для статической версии
+    private PublicKey publicKey;
     /**
      * Хранит список транзакций, из которых можно совершить вывод.
      */
@@ -20,11 +24,13 @@ public class BlockChain {
     public BlockChain(BitcoinNode node)
     {
         this.node = node;
+        this.publicKey = node.getPublicKey();
         this.staticMode = false;
     }
-    public BlockChain()
+    public BlockChain(PublicKey publicKey)
     {
         this.staticMode = true;
+        this.publicKey = publicKey;
     }
 
     private boolean addBlock(Block block)
@@ -58,7 +64,12 @@ public class BlockChain {
                 }
             }
         }
-
+        //собираем транзакции, в которых есть выходы на эту транзакцию
+        //и собираем индексы нужных выходов
+        ArrayList<Transaction> inputsTx = new ArrayList<Transaction>();
+        ArrayList<Integer> inputsTxOutputIndex = new ArrayList<Integer>();
+        Transaction myDeleteTx = null;
+        boolean myTxTog = false;
         //проверяем, все ли входы выполняют условие получение биткоина
         for(int i = 0; i < block.size(); i++)
         {
@@ -80,35 +91,50 @@ public class BlockChain {
                         byte[] BCBlockTxId = BCBlockTransaction.getTxId();
                         boolean eqId = true;
                         for(int r = 0; r < BCBlockTxId.length; r++)
-                            if(BCBlockTxId[r] != inputPrevHash[r])
+                            if(BCBlockTxId[r] != inputPrevHash[r]) {
                                 eqId = false;
+                                break;
+                            }
                         if(eqId) {
                             //если такой индекс существует
                             if(BCBlockTransaction.getOutputsSize() > input.getOutputIndex())
                             {
                                 TxOut output = BCBlockTransaction.getOutput(input.getOutputIndex());
+                                //если множество публичных ключей
+
                                 //если проверка проходит
-                                if(output.txOutputVerification(input.getPrevTxHash(), input.getSignature())) {
+                                if(output.txOutputVerification(input.getPrevTxHash(), input.getSignature(0))) {
                                     tog = true;
+                                    //добавляем для проверки на перевод верной суммы
+                                    inputsTx.add(BCBlockTransaction);
+                                    inputsTxOutputIndex.add(input.getOutputIndex());
                                     //обновляем myTransactions, если это был выход нашей транзакции
-                                    if(staticMode)
-                                        break;
-                                    else if(output.getPublicKey().equals(node.getPublicKey()))
-                                        deleteMyTransaction(BCBlockTransaction);
+                                    if(output.getPublicKey().equals(publicKey)) {
+                                        myDeleteTx = BCBlockTransaction;
+                                        myTxTog = true;
+                                    }
                                     break;
                                 }
                             }
                         }
                     }
                 }
+                //проверка, что пересылается приемлемая сумма
+                int inputsSatoshisCount = inputBalance(inputsTx, inputsTxOutputIndex);  //смотрим, что приходит на входы
+                int outputSatoshisCount = outputBalance(tx); //смотрим, какие суммы на выходах
+                if(outputSatoshisCount > inputsSatoshisCount)
+                    return false;
+                //удаляем использованную транзакцию, если она есть
+                if(myTxTog)
+                    deleteMyTransaction(myDeleteTx);
                 //если выход не был найден, то блок вылетает
                 if(!tog)
                     return false;
             }
         }
         //update my transactions
-        if(!staticMode)
-            findMyTransaction(block);
+        findMyTransaction(block);
+
 
         //add block
         addBlock(block);
@@ -127,6 +153,28 @@ public class BlockChain {
     }
 
 
+    private Integer inputBalance(ArrayList<Transaction> myTx, ArrayList<Integer> myTxOutputIndex)
+    {
+       Integer inputBalance = 0;
+       Iterator<Transaction> it = myTx.iterator();
+       Iterator<Integer> index = myTxOutputIndex.iterator();
+
+       while(it.hasNext())
+           inputBalance += it.next().getOutput(index.next()).getSatoshisCount();
+
+       return inputBalance;
+    }
+
+    private Integer outputBalance(Transaction tx)
+    {
+        Integer outputBalance = 0;
+
+        for(int i = 0; i < tx.getOutputsSize(); i++)
+            outputBalance += tx.getOutput(i).getSatoshisCount();
+
+        return outputBalance;
+    }
+
     /**
      * Ищет в блокчейне транзакции с выводом на адрес(pubkey) этой ноды.
      */
@@ -138,7 +186,7 @@ public class BlockChain {
             for(int j = 0; j < tx.getOutputsSize(); j++)
             {
                 TxOut output = tx.getOutput(j);
-                if(output.getPublicKey().equals(node.getPublicKey()))
+                if(output.getPublicKey().equals(publicKey))
                 {
                     myTransactions.add(tx);
                     break;

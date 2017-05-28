@@ -10,13 +10,13 @@ public class TxIn {
     private byte[] prevTxHash;     //in test mode it number of transaction
     private int outputIndex;    //index of output in prev transaction
     //signature script
-    private byte[] signature;       //подписанный секретным ключом хэш транзакции
+    private byte[][] signatures;       //подписанный секретным ключом хэш транзакции
 
-    public TxIn(byte[] prevTxHash, int outputIndex, byte[] signature)
+    public TxIn(byte[] prevTxHash, int outputIndex, byte[][] signatures)
     {
         this.prevTxHash = prevTxHash;
         this.outputIndex = outputIndex;
-        this.signature = signature;
+        this.signatures = signatures;
     }
 
     public byte[] getPrevTxHash()
@@ -29,9 +29,9 @@ public class TxIn {
         return outputIndex;
     }
 
-    public byte[] getSignature()
+    public byte[] getSignature(int index)
     {
-        return signature;
+        return signatures[index];
     }
 
     @Override
@@ -44,9 +44,12 @@ public class TxIn {
         str += "; ";
         str += "Output Index: " + String.format("%+3d", outputIndex);
         str += "; ";
-        str += "Signature: ";
-        for(int i = 0; i < 8 && i < signature.length; i++)
-            str += String.format("%x", signature[i]);
+        str += "Signatures: ";
+        for(int j = 0; j < signatures.length; j++) {
+            for (int i = 0; i < 8 && i < signatures[0].length; i++)
+                str += String.format("%x", signatures[j][i]);
+            str += "; ";
+        }
         return str;
     }
 }
